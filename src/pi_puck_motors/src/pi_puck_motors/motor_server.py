@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-import sys
+
+# ROS imports
 import roslib
 roslib.load_manifest('pi_puck_motors')
-print(sys.path)
-from pi_puck_base.utils import *
 import rospy
+
+# Standard imports
+from pi_puck_base.utils import *
 
 
 def pi_puck_motor_server():
