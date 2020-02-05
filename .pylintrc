@@ -1,0 +1,3 @@
+# This is highly cursed but does make pylint happy...
+[MASTER]
+init-hook="from pylint.config import find_pylintrc; import os, sys; pylintrc_loc = find_pylintrc(); [sys.path.append(os.path.dirname(os.path.join(pylintrc_loc, item, "/src/"))) for item in os.listdir(pylintrc_loc)];"
