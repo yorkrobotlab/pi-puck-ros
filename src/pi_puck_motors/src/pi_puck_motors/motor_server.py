@@ -26,7 +26,7 @@ MAX_SPEED = 500
 
 
 def pi_puck_motor_server():
-    #bus = SMBus(I2C_CHANNEL)
+    bus = SMBus(I2C_CHANNEL)
 
     def convert_speed(x):
         x = float(x)
