@@ -10,5 +10,5 @@ insert_final_newline = false
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{xml,sh,txt}]
+[*.{xml,sh,txt,launch}]
 indent_size = 2

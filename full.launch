@@ -1,0 +1,7 @@
+<launch>
+  <group ns="$(optenv ROBOT_NAME pi_puck)">
+    <group ns="navigation">
+      <node name="motors" pkg="pi_puck_motors" type="motor_server.py" />
+    </group>
+  </group>
+</launch>
