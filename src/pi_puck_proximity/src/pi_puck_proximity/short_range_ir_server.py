@@ -45,7 +45,7 @@ BUS = SMBus(I2C_CHANNEL)
 
 def calculate_distance(x):
     """Calculates an estimate of the range in metres."""
-    return round(-(1000000.0 * math.log((50 y)/199313.0)) / 101211.0, 2) / 1000.0
+    return round(-(1000000.0 * math.log((50 * x)/199313.0)) / 101211.0, 2) / 1000.0
 
 
 def close_bus():
