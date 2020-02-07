@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 """ROS Node to expose a topics for the short range IR sensors on the Pi-puck."""
 
+import math
+
 # ROS imports
 import rospy
+from sensor_msgs.msg import Range
+
 # Standard imports
 from smbus import SMBus
-from std_msgs.msg import UInt16
 
 # Constants
 I2C_CHANNEL = 4
@@ -40,6 +43,11 @@ IR_SENSOR_COUNT = 8
 BUS = SMBus(I2C_CHANNEL)
 
 
+def calculate_distance(x):
+    """Calculates an estimate of the range in metres."""
+    return round(-(1000000.0 * math.log((50 y)/199313.0)) / 101211.0, 2) / 1000.0
+
+
 def close_bus():
     """Close the I2C bus after the ROS Node is shutdown."""
     BUS.write_word_data(EPUCK_I2C_ADDR, IR_CONTROL, 0)  # Stop IR
@@ -55,7 +63,7 @@ def pi_puck_short_range_ir_server():
 
     for ir_sensor in range(IR_SENSOR_COUNT):
         ir_proximity_publishers[ir_sensor] = rospy.Publisher('proximity/short_range_ir/{}'.format(ir_sensor),
-                                                             UInt16,
+                                                             Range,
                                                              queue_size=10)
 
     rospy.init_node("proximity")
@@ -64,8 +72,13 @@ def pi_puck_short_range_ir_server():
 
     while not rospy.is_shutdown():
         for ir_sensor in range(IR_SENSOR_COUNT):
-            ir_proximity_publishers[ir_sensor].publish(int(BUS.read_word_data(EPUCK_I2C_ADDR,
-                                                                              IRX_REFLECTED[ir_sensor])))
+            distance_reading_raw = int(BUS.read_word_data(EPUCK_I2C_ADDR, IRX_REFLECTED[ir_sensor]))
+            converted_distance_reading = calculate_distance(distance_reading_raw)
+            range_result = Range(radiation_type=Range.INFRARED,
+                                 min_range=0,
+                                 max_range=0.1,
+                                 range=converted_distance_reading)
+            ir_proximity_publishers[ir_sensor].publish(range_result)
         rate.sleep()
 
 
