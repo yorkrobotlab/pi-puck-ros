@@ -2,7 +2,7 @@ from setuptools import setup
 from catkin_pkg.python_setup import generate_distutils_setup
 
 d = generate_distutils_setup(
-    packages=['pi_puck_ir'],
+    packages=['pi_puck_proximity'],
     scripts=[],
     package_dir={'': 'src'}
 )
