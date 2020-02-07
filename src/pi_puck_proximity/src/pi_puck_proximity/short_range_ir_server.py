@@ -51,7 +51,7 @@ def pi_puck_short_range_ir_server():
     rospy.on_shutdown(close_bus)
     BUS.write_word_data(EPUCK_I2C_ADDR, IR_CONTROL, 1)  # Turn IR sensors on
 
-    ir_proximity_ambient_publishers = {}
+    ir_proximity_publishers = {}
 
     for ir_sensor in range(IR_SENSOR_COUNT):
         ir_proximity_publishers[ir_sensor] = rospy.Publisher('proximity/short_range_ir/{}'.format(ir_sensor),
