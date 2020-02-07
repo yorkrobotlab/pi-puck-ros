@@ -5,7 +5,7 @@ import roslib
 roslib.load_manifest('pi_puck_motors')
 import rospy
 
-from std_msgs.msg import Int16, Float32
+from std_msgs.msg import UInt16, Float32
 
 # Other Pi-puck package imports
 from pi_puck_base.utils import *
@@ -24,30 +24,41 @@ RIGHT_MOTOR_STEPS = 5
 
 MAX_SPEED = 500
 
+BUS = SMBus(I2C_CHANNEL)
+
+
+def convert_speed(x):
+    x = float(x)
+    if x > 1.0:
+        x = 1.0
+    elif x < -1.0:
+        x = -1.0
+    return int(x * MAX_SPEED)
+
+
+def callback_left(data):
+    BUS.write_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_SPEED,
+                        convert_speed(data.data))
+
+
+def callback_right(data):
+    BUS.write_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_SPEED,
+                        convert_speed(data.data))
+
+
+def close_bus():
+    BUS.close()
+
 
 def pi_puck_motor_server():
-    bus = SMBus(I2C_CHANNEL)
-
-    def convert_speed(x):
-        x = float(x)
-        if x > 1.0:
-            x = 1.0
-        elif x < -1.0:
-            x = -1.0
-        return int(x * MAX_SPEED)
-
-    def callback_left(data):
-        bus.write_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_SPEED,
-                            convert_speed(data))
-
-    def callback_right(data):
-        bus.write_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_SPEED,
-                            convert_speed(data))
+    rospy.on_shutdown(close_bus)
 
     steps_right_pub = rospy.Publisher('motors/steps_right',
-                                      Int16,
+                                      UInt16,
                                       queue_size=10)
-    steps_left_pub = rospy.Publisher('motors/steps_left', Int16, queue_size=10)
+    steps_left_pub = rospy.Publisher('motors/steps_left',
+                                     UInt16,
+                                     queue_size=10)
 
     rospy.init_node("motors")
 
@@ -56,14 +67,12 @@ def pi_puck_motor_server():
 
     rate = rospy.Rate(rospy.get_param('rate', 10))
 
-    rospy.loginfo("Hello")
-
     while not rospy.is_shutdown():
         print("publishing")
         steps_right_pub.publish(
-            int(bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS)))
+            int(BUS.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS)))
         steps_left_pub.publish(
-            int(bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS)))
+            int(BUS.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS)))
         rate.sleep()
 
 
