@@ -23,8 +23,8 @@ The following features are currently supported by the packages:
   - [x] Speed
   - [x] Steps 
 - [ ] Proximity
-  - [ ] e-puck IR
-  - [ ] Pi-puck distance
+  - [x] e-puck IR (< 1 metre range)
+  - [ ] Pi-puck IR (4 metres range)
 - [ ] Vision
   - [ ] e-puck camera
   - [ ] Pi-puck camera 
