@@ -45,7 +45,18 @@ BUS = SMBus(I2C_CHANNEL)
 
 def calculate_distance(x):
     """Calculates an estimate of the range in metres."""
-    return round(-(1000000.0 * math.log((50 * x)/199313.0)) / 101211.0, 2) / 1000.0
+    try:
+        result_in_mm = -(1250000.0 * math.log((20.0 * x) / 116727.0)) / 108221.0
+        result = round(result_in_mm, 2) / 1000.0
+    except ValueError:
+        result = -float("inf")
+
+    if result < 0.005:
+        result = -float("inf")
+    elif result > 0.05:
+        result = float("inf")
+
+    return result
 
 
 def close_bus():
@@ -72,8 +83,9 @@ def pi_puck_short_range_ir_server():
 
     while not rospy.is_shutdown():
         for ir_sensor in range(IR_SENSOR_COUNT):
-            distance_reading_raw = int(BUS.read_word_data(EPUCK_I2C_ADDR, IRX_REFLECTED[ir_sensor]))
-            converted_distance_reading = calculate_distance(distance_reading_raw)
+            reflected_raw = int(BUS.read_word_data(EPUCK_I2C_ADDR, IRX_REFLECTED[ir_sensor]))
+            ambient_raw = int(BUS.read_word_data(EPUCK_I2C_ADDR, IRX_AMBIENT[ir_sensor]))
+            converted_distance_reading = calculate_distance(reflected_raw - ambient_raw)
             range_result = Range(radiation_type=Range.INFRARED,
                                  min_range=0,
                                  max_range=0.1,
