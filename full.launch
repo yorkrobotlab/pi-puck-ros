@@ -2,7 +2,10 @@
   <group ns="$(optenv ROBOT_NAME pi_puck)">
     <group ns="navigation">
       <node name="motors" pkg="pi_puck_motors" type="motor_server.py" />
-      <node name="proximity" pkg="pi_puck_proximity" type="short_range_ir_server.py" />
+      <group ns="proximity">
+        <node name="short_range_ir_server" pkg="pi_puck_proximity" type="short_range_ir_server.py" />
+        <node name="long_range_ir_server" pkg="pi_puck_proximity" type="long_range_ir_server.py" />
+      </group>
     </group>
   </group>
 </launch>

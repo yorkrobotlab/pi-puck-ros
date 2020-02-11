@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""ROS Node to expose a topics for the short range IR sensors on the Pi-puck."""
+"""ROS Node to expose topics for the short range IR sensors on the Pi-puck."""
 
 import math
 
@@ -37,6 +37,8 @@ IR6_AMBIENT = 21
 IR7_AMBIENT = 22
 
 IRX_AMBIENT = (IR0_AMBIENT, IR1_AMBIENT, IR2_AMBIENT, IR3_AMBIENT, IR4_AMBIENT, IR5_AMBIENT, IR6_AMBIENT, IR7_AMBIENT)
+
+IR_SENSOR_ANGLES = (0, 45, 90, 135, 180, 225, 270, 315)
 
 IR_SENSOR_COUNT = 8
 
@@ -77,7 +79,7 @@ def pi_puck_short_range_ir_server():
                                                              Range,
                                                              queue_size=10)
 
-    rospy.init_node("proximity")
+    rospy.init_node("short_range_ir")
 
     rate = rospy.Rate(rospy.get_param('rate', 5))
 
