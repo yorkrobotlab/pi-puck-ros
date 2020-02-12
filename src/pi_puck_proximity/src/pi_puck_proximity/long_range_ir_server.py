@@ -23,15 +23,15 @@ RANGES = {"short": SHORT_RANGE, "medium": MEDIUM_RANGE, "long": LONG_RANGE}
 
 # In Millimetres
 MAX_RANGES = {
-    SHORT_RANGE: 1360
-    MEDIUM_RANGE: 2900
+    SHORT_RANGE: 1360,
+    MEDIUM_RANGE: 2900,
     LONG_RANGE: 3600
 }
 
 # In Millimetres
 MIN_RANGES = {
-    SHORT_RANGE: 4
-    MEDIUM_RANGE: 4
+    SHORT_RANGE: 4,
+    MEDIUM_RANGE: 4,
     LONG_RANGE: 4
 }
 
