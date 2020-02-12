@@ -66,8 +66,8 @@ class PiPuckTOFSensorServer:
         for sensor in self._ir_sensors.values():
             sensor.open()
 
-            timing_budget_us = (1.0 / self._rate_raw * 1000000.0) / 12.0
-            inter_measurement_period_ms = (1.0 / self._rate_raw * 1000.0) / 6.0
+            timing_budget_us = int((1.0 / self._rate_raw * 1000000.0) / 12.0)
+            inter_measurement_period_ms = int((1.0 / self._rate_raw * 1000.0) / 6.0)
 
             sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
 
