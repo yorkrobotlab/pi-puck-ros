@@ -75,7 +75,7 @@ def pi_puck_short_range_ir_server():
     ir_proximity_publishers = {}
 
     for ir_sensor in range(IR_SENSOR_COUNT):
-        ir_proximity_publishers[ir_sensor] = rospy.Publisher('proximity/short_range_ir/{}'.format(ir_sensor),
+        ir_proximity_publishers[ir_sensor] = rospy.Publisher('short_range_ir/{}'.format(ir_sensor),
                                                              Range,
                                                              queue_size=10)
 

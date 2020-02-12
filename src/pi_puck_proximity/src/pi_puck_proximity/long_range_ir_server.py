@@ -32,24 +32,21 @@ class PiPuckTOFSensorServer:
     def __init__(self):
         rospy.on_shutdown(self.close_sensor)
 
-        sensor_index = int(rospy.get_param('sensor', 0))
-
-        rospy.init_node("long_range_ir_" + str(sensor_index))
+        rospy.init_node("long_range_ir")
 
         self._rate_raw = float(rospy.get_param('rate', 1))
 
         self._rate = rospy.Rate(self._rate_raw)
 
-        mode = rospy.get_param('mode', "short")
+        sensor_index = int(rospy.get_param('~sensor', 0))
+        mode = rospy.get_param('~mode', "short")
 
         if mode in RANGES:
             self._distance_mode = RANGES[mode]
         else:
             self._distance_mode = mode
 
-        self._sensor_publisher = rospy.Publisher('proximity/long_range_ir/{}'.format(sensor_index),
-                                                 Range,
-                                                 queue_size=10)
+        self._sensor_publisher = rospy.Publisher('long_range_ir/{}'.format(sensor_index), Range, queue_size=10)
 
         self._sensor = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[sensor_index], i2c_address=TOF_I2C_ADDRESS)
 
@@ -84,9 +81,9 @@ class PiPuckTOFSensorServer:
         self.open_sensor()
         while not rospy.is_shutdown():
             range_result = Range(radiation_type=Range.INFRARED,
-                                    min_range=MIN_RANGES[self._distance_mode] / 1000.0,
-                                    max_range=MAX_RANGES[self._distance_mode] / 1000.0,
-                                    range=self.read_sensor())
+                                 min_range=MIN_RANGES[self._distance_mode] / 1000.0,
+                                 max_range=MAX_RANGES[self._distance_mode] / 1000.0,
+                                 range=self.read_sensor())
             self._sensor_publisher.publish(range_result)
             self._rate.sleep()
 
