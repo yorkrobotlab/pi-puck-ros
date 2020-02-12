@@ -22,18 +22,10 @@ LONG_RANGE = 3
 RANGES = {"short": SHORT_RANGE, "medium": MEDIUM_RANGE, "long": LONG_RANGE}
 
 # In Millimetres
-MAX_RANGES = {
-    SHORT_RANGE: 1360,
-    MEDIUM_RANGE: 2900,
-    LONG_RANGE: 3600
-}
+MAX_RANGES = {SHORT_RANGE: 1360, MEDIUM_RANGE: 2900, LONG_RANGE: 3600}
 
 # In Millimetres
-MIN_RANGES = {
-    SHORT_RANGE: 4,
-    MEDIUM_RANGE: 4,
-    LONG_RANGE: 4
-}
+MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
 
 class PiPuckTOFSensorServer:
@@ -80,13 +72,10 @@ class PiPuckTOFSensorServer:
                 sensor_reading = self._ir_sensors[ir_sensor].get_distance()
                 if sensor_reading < MIN_RANGES[self._distance_mode]:
                     sensor_reading = -float("inf")
-                elif sensor_reading > MAX_RANGES[self._distance_mode];
+                elif sensor_reading > MAX_RANGES[self._distance_mode]:
                     sensor_reading = float("inf")
                 sensor_reading = sensor_reading / 1000.0
-                range_result = Range(radiation_type=Range.INFRARED,
-                                     min_range=0,
-                                     max_range=0.1,
-                                     range=sensor_reading)
+                range_result = Range(radiation_type=Range.INFRARED, min_range=0, max_range=0.1, range=sensor_reading)
                 ir_proximity_publishers[ir_sensor].publish(range_result)
             self._rate.sleep()
 
