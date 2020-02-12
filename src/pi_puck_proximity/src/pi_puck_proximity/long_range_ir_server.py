@@ -32,15 +32,15 @@ class PiPuckTOFSensorServer:
     def __init__(self):
         rospy.on_shutdown(self.close_sensor)
 
-        rospy.init_node("long_range_ir")
+        sensor_index = int(rospy.get_param('sensor', 0))
+
+        rospy.init_node("long_range_ir_" + str(sensor_index))
 
         self._rate_raw = float(rospy.get_param('rate', 1))
 
         self._rate = rospy.Rate(self._rate_raw)
 
         mode = rospy.get_param('mode', "short")
-
-        sensor_index = rospy.get_param('sensor', 0)
 
         if mode in RANGES:
             self._distance_mode = RANGES[mode]
