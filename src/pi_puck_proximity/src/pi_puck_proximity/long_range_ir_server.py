@@ -76,7 +76,7 @@ class PiPuckTOFSensorServer:
                     sensor_reading = float("inf")
                 sensor_reading = sensor_reading / 1000.0
                 range_result = Range(radiation_type=Range.INFRARED, min_range=0, max_range=0.1, range=sensor_reading)
-                ir_proximity_publishers[ir_sensor].publish(range_result)
+                self._ir_sensor_publishers[ir_sensor].publish(range_result)
             self._rate.sleep()
 
 
