@@ -6,8 +6,7 @@ import rospy
 from sensor_msgs.msg import Range
 
 # Standard imports
-import sys
-from importlib import import_module
+import VL53L1X
 
 TOF_SENSOR_ANGLES = (0, 45, 135, 180, 225, 315)
 
@@ -31,7 +30,7 @@ MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
 class PiPuckTOFSensorServer:
     def __init__(self):
-        rospy.on_shutdown(self.close_sensors)
+        rospy.on_shutdown(self.stop_sensors)
 
         rospy.init_node("long_range_ir")
 
@@ -42,8 +41,6 @@ class PiPuckTOFSensorServer:
         self._rate_raw = float(rospy.get_param('rate', 1))
 
         self._rate = rospy.Rate(self._rate_raw)
-
-        self._sensor_modules = {}
 
         mode = rospy.get_param('mode', "short")
 
@@ -57,20 +54,16 @@ class PiPuckTOFSensorServer:
                                                               Range,
                                                               queue_size=10)
 
-            self._sensor_modules[ir_sensor] = import_module("VL53L1X")
+            ir_sensors[ir_sensor] = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor], i2c_address=TOF_I2C_ADDRESS)
 
-            ir_sensors[ir_sensor] = self._sensor_modules[ir_sensor].VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor],
-                                                                            i2c_address=TOF_I2C_ADDRESS)
-
-            del sys.modules["VL53L1X"]
-
-    def close_sensors(self):
+    def stop_sensors(self):
         """Close the sensors after the ROS Node is shutdown."""
         for sensor in self._ir_sensors.values():
+            sensor.open()
             sensor.stop_ranging()
             sensor.close()
 
-    def open_sensors(self):
+    def start_sensors(self):
         for sensor in self._ir_sensors.values():
             sensor.open()
 
@@ -80,12 +73,19 @@ class PiPuckTOFSensorServer:
             sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
 
             sensor.start_ranging(self._distance_mode)
+            sensor.close()
+
+    def read_sensor(self, ir_sensor):
+        self._ir_sensors[ir_sensor].open()
+        sensor_reading = self._ir_sensors[ir_sensor].get_distance()
+        self._ir_sensors[ir_sensor].close()
+        return sensor_reading
 
     def run(self):
-        self.open_sensors()
+        self.start_sensors()
         while not rospy.is_shutdown():
             for ir_sensor in range(IR_SENSOR_COUNT):
-                sensor_reading = self._ir_sensors[ir_sensor].get_distance()
+                sensor_reading = self.read_sensor(ir_sensor)
                 if sensor_reading < MIN_RANGES[self._distance_mode]:
                     sensor_reading = -float("inf")
                 elif sensor_reading > MAX_RANGES[self._distance_mode]:
