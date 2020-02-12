@@ -30,13 +30,9 @@ MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
 class PiPuckTOFSensorServer:
     def __init__(self):
-        rospy.on_shutdown(self.stop_sensors)
+        rospy.on_shutdown(self.stop_sensor)
 
         rospy.init_node("long_range_ir")
-
-        self._ir_sensor_publishers = ir_sensor_publishers = {}
-
-        self._ir_sensors = ir_sensors = {}
 
         self._rate_raw = float(rospy.get_param('rate', 1))
 
@@ -44,68 +40,54 @@ class PiPuckTOFSensorServer:
 
         mode = rospy.get_param('mode', "short")
 
+        sensor_index = rospy.get_param('sensor', 0)
+
         if mode in RANGES:
             self._distance_mode = RANGES[mode]
         else:
             self._distance_mode = mode
 
-        for ir_sensor in range(IR_SENSOR_COUNT):
-            ir_sensor_publishers[ir_sensor] = rospy.Publisher('proximity/long_range_ir/{}'.format(ir_sensor),
-                                                              Range,
-                                                              queue_size=10)
+        self._sensor_publisher = rospy.Publisher('proximity/long_range_ir/{}'.format(sensor_index),
+                                                 Range,
+                                                 queue_size=10)
 
-            ir_sensors[ir_sensor] = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor], i2c_address=TOF_I2C_ADDRESS)
+        self._sensor = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[sensor_index], i2c_address=TOF_I2C_ADDRESS)
 
-    def stop_sensors(self):
-        """Close the sensors after the ROS Node is shutdown."""
-        for sensor in self._ir_sensors.values():
-            sensor.open()
-            sensor.stop_ranging()
-            sensor.close()
+    def close_sensor(self):
+        """Close the sensor after the ROS Node is shutdown."""
+        self._sensor.stop_ranging()
+        self._sensor.close()
 
-    def start_sensors(self):
-        for sensor in self._ir_sensors.values():
-            sensor.open()
-
-            timing_budget_us = int((1.0 / self._rate_raw * 1000000.0) / 12.0)
-            inter_measurement_period_ms = int((1.0 / self._rate_raw * 1000.0) / 6.0)
-
-            sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
-
-            sensor.start_ranging(self._distance_mode)
-            sensor.close()
-
-    def read_sensor(self, ir_sensor):
-        sensor = self._ir_sensors[ir_sensor]
-        sensor.open()
-
-        sensor.stop_ranging()
+    def open_sensor(self):
+        """Open the sensor and setup timing."""
+        self._sensor.open()
 
         timing_budget_us = int((1.0 / self._rate_raw * 1000000.0) / 12.0)
         inter_measurement_period_ms = int((1.0 / self._rate_raw * 1000.0) / 6.0)
 
-        sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
+        self._sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
 
-        sensor.start_ranging(self._distance_mode)
+        self._sensor.start_ranging(self._distance_mode)
 
-        sensor_reading = sensor.get_distance()
-
-        sensor.close()
-
+    def read_sensor(self):
+        """Read the sensor."""
+        sensor_reading = self._sensor.get_distance()
+        if sensor_reading < MIN_RANGES[self._distance_mode]:
+            sensor_reading = -float("inf")
+        elif sensor_reading > MAX_RANGES[self._distance_mode]:
+            sensor_reading = float("inf")
+        sensor_reading = sensor_reading / 1000.0
         return sensor_reading
 
     def run(self):
-        self.start_sensors()
+        """Run the sensor server."""
+        self.open_sensor()
         while not rospy.is_shutdown():
-            for ir_sensor in range(IR_SENSOR_COUNT):
-                sensor_reading = self.read_sensor(ir_sensor)
-                if sensor_reading < MIN_RANGES[self._distance_mode]:
-                    sensor_reading = -float("inf")
-                elif sensor_reading > MAX_RANGES[self._distance_mode]:
-                    sensor_reading = float("inf")
-                sensor_reading = sensor_reading / 1000.0
-                range_result = Range(radiation_type=Range.INFRARED, min_range=0, max_range=0.1, range=sensor_reading)
-                self._ir_sensor_publishers[ir_sensor].publish(range_result)
+            range_result = Range(radiation_type=Range.INFRARED,
+                                    min_range=MIN_RANGES[self._distance_mode] / 1000.0,
+                                    max_range=MAX_RANGES[self._distance_mode] / 1000.0,
+                                    range=self.read_sensor())
+            self._sensor_publisher.publish(range_result)
             self._rate.sleep()
 
 

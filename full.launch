@@ -3,8 +3,27 @@
     <group ns="navigation">
       <node name="motors" pkg="pi_puck_motors" type="motor_server.py" />
       <group ns="proximity">
-        <node name="short_range_ir_server" pkg="pi_puck_proximity" type="short_range_ir_server.py" />
-        <node name="long_range_ir_server" pkg="pi_puck_proximity" type="long_range_ir_server.py" />
+        <node name="short_range_ir_server" pkg="pi_puck_proximity" type="short_range_ir_server.py">
+          <param name="sensor" value="0" />
+        </node>
+        <node name="long_range_ir_server_0" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="0" />
+        </node>
+        <node name="long_range_ir_server_1" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="1" />
+        </node>
+        <node name="long_range_ir_server_2" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="2" />
+        </node>
+        <node name="long_range_ir_server_3" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="3" />
+        </node>
+        <node name="long_range_ir_server_4" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="4" />
+        </node>
+        <node name="long_range_ir_server_5" pkg="pi_puck_proximity" type="long_range_ir_server.py">
+          <param name="sensor" value="5" />
+        </node>
       </group>
     </group>
   </group>
