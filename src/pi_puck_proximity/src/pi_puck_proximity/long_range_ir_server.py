@@ -38,7 +38,9 @@ class PiPuckTOFSensorServer:
 
         self._ir_sensors = ir_sensors = {}
 
-        self._rate = rospy.Rate(rospy.get_param('rate', 1))
+        self._rate_raw = float(rospy.get_param('rate', 1))
+
+        self._rate = rospy.Rate(self._rate_raw)
 
         mode = rospy.get_param('mode', "short")
 
@@ -63,6 +65,12 @@ class PiPuckTOFSensorServer:
     def open_sensors(self):
         for sensor in self._ir_sensors.values():
             sensor.open()
+
+            timing_budget_us = (1.0 / self._rate_raw * 1000000.0) / 12.0
+            inter_measurement_period_ms = (1.0 / self._rate_raw * 1000.0) / 6.0
+
+            sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
+
             sensor.start_ranging(self._distance_mode)
 
     def run(self):
