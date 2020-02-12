@@ -7,6 +7,7 @@ from sensor_msgs.msg import Range
 
 # Standard imports
 import sys
+from importlib import import_module
 
 TOF_SENSOR_ANGLES = (0, 45, 135, 180, 225, 315)
 
@@ -42,6 +43,8 @@ class PiPuckTOFSensorServer:
 
         self._rate = rospy.Rate(self._rate_raw)
 
+        self._sensor_modules = {}
+
         mode = rospy.get_param('mode', "short")
 
         if mode in RANGES:
@@ -54,9 +57,10 @@ class PiPuckTOFSensorServer:
                                                               Range,
                                                               queue_size=10)
 
-            import VL53L1X
+            self._sensor_modules[ir_sensor] = import_module("VL53L1X")
 
-            ir_sensors[ir_sensor] = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor], i2c_address=TOF_I2C_ADDRESS)
+            ir_sensors[ir_sensor] = self._sensor_modules[ir_sensor].VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor],
+                                                                            i2c_address=TOF_I2C_ADDRESS)
 
             del sys.modules["VL53L1X"]
 
