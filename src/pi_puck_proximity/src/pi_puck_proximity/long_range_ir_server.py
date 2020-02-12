@@ -34,7 +34,7 @@ class PiPuckTOFSensorServer:
 
         rospy.init_node("long_range_ir")
 
-        self._rate_raw = float(rospy.get_param('rate', 1))
+        self._rate_raw = float(rospy.get_param('~rate', 1))
 
         self._rate = rospy.Rate(self._rate_raw)
 

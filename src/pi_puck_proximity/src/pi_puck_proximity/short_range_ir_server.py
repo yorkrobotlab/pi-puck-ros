@@ -81,7 +81,7 @@ def pi_puck_short_range_ir_server():
 
     rospy.init_node("short_range_ir")
 
-    rate = rospy.Rate(rospy.get_param('rate', 5))
+    rate = rospy.Rate(rospy.get_param('~rate', 5))
 
     while not rospy.is_shutdown():
         for ir_sensor in range(IR_SENSOR_COUNT):
