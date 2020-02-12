@@ -77,8 +77,20 @@ class PiPuckTOFSensorServer:
 
     def read_sensor(self, ir_sensor):
         self._ir_sensors[ir_sensor].open()
+
+        sensor.stop_ranging()
+
+        timing_budget_us = int((1.0 / self._rate_raw * 1000000.0) / 12.0)
+        inter_measurement_period_ms = int((1.0 / self._rate_raw * 1000.0) / 6.0)
+
+        sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
+
+        sensor.start_ranging(self._distance_mode)
+
         sensor_reading = self._ir_sensors[ir_sensor].get_distance()
+
         self._ir_sensors[ir_sensor].close()
+
         return sensor_reading
 
     def run(self):
