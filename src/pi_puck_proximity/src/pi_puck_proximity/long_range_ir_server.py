@@ -76,7 +76,8 @@ class PiPuckTOFSensorServer:
             sensor.close()
 
     def read_sensor(self, ir_sensor):
-        self._ir_sensors[ir_sensor].open()
+        sensor = self._ir_sensors[ir_sensor]
+        sensor.open()
 
         sensor.stop_ranging()
 
@@ -87,9 +88,9 @@ class PiPuckTOFSensorServer:
 
         sensor.start_ranging(self._distance_mode)
 
-        sensor_reading = self._ir_sensors[ir_sensor].get_distance()
+        sensor_reading = sensor.get_distance()
 
-        self._ir_sensors[ir_sensor].close()
+        sensor.close()
 
         return sensor_reading
 
