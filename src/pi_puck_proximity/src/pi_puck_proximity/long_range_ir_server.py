@@ -6,7 +6,7 @@ import rospy
 from sensor_msgs.msg import Range
 
 # Standard imports
-import VL53L1X
+import sys
 
 TOF_SENSOR_ANGLES = (0, 45, 135, 180, 225, 315)
 
@@ -54,7 +54,11 @@ class PiPuckTOFSensorServer:
                                                               Range,
                                                               queue_size=10)
 
+            import VL53L1X
+
             ir_sensors[ir_sensor] = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[ir_sensor], i2c_address=TOF_I2C_ADDRESS)
+
+            del sys.modules["VL53L1X"]
 
     def close_sensors(self):
         """Close the sensors after the ROS Node is shutdown."""
