@@ -30,7 +30,7 @@ MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
 class PiPuckTOFSensorServer:
     def __init__(self):
-        rospy.on_shutdown(self.stop_sensor)
+        rospy.on_shutdown(self.close_sensor)
 
         rospy.init_node("long_range_ir")
 
