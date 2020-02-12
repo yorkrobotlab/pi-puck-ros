@@ -56,12 +56,12 @@ class PiPuckTOFSensorServer:
 
     def close_sensors(self):
         """Close the sensors after the ROS Node is shutdown."""
-        for sensor in self._sensors:
+        for sensor in self._ir_sensors:
             sensor.stop_ranging()
             sensor.close()
 
     def open_sensors(self):
-        for sensor in self._sensors:
+        for sensor in self._ir_sensors:
             sensor.open()
             sensor.start_ranging(self._distance_mode)
 
