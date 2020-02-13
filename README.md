@@ -1,5 +1,7 @@
 # Pi-puck ROS Driver Package
 
+[![CodeFactor](https://www.codefactor.io/repository/github/jmalego/pi_puck_ros_packages/badge?s=4f1afa0e0b3528853fb9948419057e579f23f466)](https://www.codefactor.io/repository/github/jmalego/pi_puck_ros_packages)
+
 ## Introduction
 
 This repository contains the ROS driver package for support for the Pi-puck robotics platform.
