@@ -91,7 +91,7 @@ def _twos_comp(val, bits):
     return val
 
 
-class LSM9DS1:
+class LSM9DS1(object):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
     def __init__(self, i2c_bus=3, mag_address=0x1e, xg_address=0x6b):
@@ -117,6 +117,7 @@ class LSM9DS1:
         self._write_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG6_XL, 0xC0)
         # enable mag continuous
         self._write_u8(_MAGTYPE, _LSM9DS1_REGISTER_CTRL_REG3_M, 0x00)
+
         # Set default ranges for the various sensors
         self._accel_mg_lsb = None
         self._mag_mgauss_lsb = None
