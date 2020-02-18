@@ -86,7 +86,7 @@ GYROSCALE_2000DPS = (0b11 << 3)  # +/- 2000 degrees/s rotation
 class LSM9DS1:
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, i2c_bus=4, mag_address=0x1e, xg_address=0x6b):
+    def __init__(self, i2c_bus=3, mag_address=0x1e, xg_address=0x6b):
         """Initialise the LSM9DS1."""
         self._bus = SMBus(i2c_bus)
         self._mag_address = mag_address
@@ -293,7 +293,7 @@ class LSM9DS1:
             i2c_address = self._xg_address
 
         self._buffer[0] = address & 0xFF
-        for index, item in enumerate(self._bus.read_i2c_block_data(i2c_address, self._buffer[0], len=count)):
+        for index, item in enumerate(self._bus.read_i2c_block_data(i2c_address, self._buffer[0], count)):
             self._buffer[index] = item
 
     def _write_u8(self, sensor_type, address, val):
