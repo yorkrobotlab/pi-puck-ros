@@ -271,11 +271,12 @@ class LSM9DS1(object):
     @property
     def temperature(self):
         """Temperature of the sensor in degrees Celsius."""
-        # This is just a guess since the starting point (21C here) isn't documented :(
-        # See discussion from:
-        #  https://github.com/kriswiner/LSM9DS1/issues/3
         temp = self.read_temp_raw()
-        temp = 27.5 + temp / 16
+        # Datasheet claims the zero point is 25 degrees C, however the
+        # temperature sensor is not designed for environmental monitoring and,
+        # therefore, isn't particularly accurate. The temperature sensor is
+        # actually supposed to be used to compensate the gyro readings.
+        temp = 25 + temp / 16
         return temp
 
     def _read_u8(self, sensor_type, address):
