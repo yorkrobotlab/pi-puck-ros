@@ -83,6 +83,14 @@ GYROSCALE_500DPS = (0b01 << 3)  # +/- 500 degrees/s rotation
 GYROSCALE_2000DPS = (0b11 << 3)  # +/- 2000 degrees/s rotation
 
 
+def _twos_comp(val, bits):
+    # Convert an unsigned integer in 2's compliment form of the specified bit
+    # length to its signed integer value and return it.
+    if val & (1 << (bits - 1)) != 0:
+        return val - (1 << bits)
+    return val
+
+
 class LSM9DS1:
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
@@ -103,7 +111,7 @@ class LSM9DS1:
            self._read_u8(_MAGTYPE, _LSM9DS1_REGISTER_WHO_AM_I_M) != _LSM9DS1_MAG_ID:
             raise RuntimeError('Could not find LSM9DS1, check wiring!')
         # enable gyro continuous
-        self._write_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG1_G, 0xC0) # on XYZ
+        self._write_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG1_G, 0xC0)  # on XYZ
         # Enable the accelerometer continous
         self._write_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG5_XL, 0x38)
         self._write_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG6_XL, 0xC0)
@@ -132,8 +140,7 @@ class LSM9DS1:
 
     @accel_range.setter
     def accel_range(self, val):
-        assert val in (ACCELRANGE_2G, ACCELRANGE_4G, ACCELRANGE_8G,
-                       ACCELRANGE_16G)
+        assert val in (ACCELRANGE_2G, ACCELRANGE_4G, ACCELRANGE_8G, ACCELRANGE_16G)
         reg = self._read_u8(_XGTYPE, _LSM9DS1_REGISTER_CTRL_REG6_XL)
         reg = (reg & ~(0b00011000)) & 0xFF
         reg |= val
@@ -162,8 +169,7 @@ class LSM9DS1:
 
     @mag_gain.setter
     def mag_gain(self, val):
-        assert val in (MAGGAIN_4GAUSS, MAGGAIN_8GAUSS, MAGGAIN_12GAUSS,
-                       MAGGAIN_16GAUSS)
+        assert val in (MAGGAIN_4GAUSS, MAGGAIN_8GAUSS, MAGGAIN_12GAUSS, MAGGAIN_16GAUSS)
         reg = self._read_u8(_MAGTYPE, _LSM9DS1_REGISTER_CTRL_REG2_M)
         reg = (reg & ~(0b01100000)) & 0xFF
         reg |= val
@@ -209,8 +215,7 @@ class LSM9DS1:
         If you want the acceleration in nice units you probably want to use the accelerometer property!
         """
         # Read the accelerometer
-        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_XL, 6,
-                         self._buffer)
+        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_XL, 6, self._buffer)
         raw_x, raw_y, raw_z = struct.unpack_from('<hhh', self._buffer[0:6])
         return (raw_x, raw_y, raw_z)
 
@@ -218,8 +223,7 @@ class LSM9DS1:
     def acceleration(self):
         """Accelerometer X, Y, Z axis values as a 3-tuple of m/s^2 values."""
         raw = self.read_accel_raw()
-        return map(lambda x: x * self._accel_mg_lsb / 1000.0 * _SENSORS_GRAVITY_STANDARD,
-                   raw)
+        return map(lambda x: x * self._accel_mg_lsb / 1000.0 * _SENSORS_GRAVITY_STANDARD, raw)
 
     def read_mag_raw(self):
         """Read raw magnetometer sensor and return as a 3-tuple of X, Y, Z values that are 16-bit unsigned values.
@@ -227,8 +231,7 @@ class LSM9DS1:
         If you want the magnetometer in nice units you probably want to use the magnetometer property!
         """
         # Read the magnetometer
-        self._read_bytes(_MAGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_M, 6,
-                         self._buffer)
+        self._read_bytes(_MAGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_M, 6, self._buffer)
         raw_x, raw_y, raw_z = struct.unpack_from('<hhh', self._buffer[0:6])
         return (raw_x, raw_y, raw_z)
 
@@ -244,8 +247,7 @@ class LSM9DS1:
         If you want the gyroscope in nice units you probably want to use the gyroscope property!
         """
         # Read the gyroscope
-        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_G, 6,
-                         self._buffer)
+        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_OUT_X_L_G, 6, self._buffer)
         raw_x, raw_y, raw_z = struct.unpack_from('<hhh', self._buffer[0:6])
         return (raw_x, raw_y, raw_z)
 
@@ -261,8 +263,7 @@ class LSM9DS1:
         If you want the temperature in nice units you probably want to use the temperature property!
         """
         # Read temp sensor
-        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_TEMP_OUT_L, 2,
-                         self._buffer)
+        self._read_bytes(_XGTYPE, 0x80 | _LSM9DS1_REGISTER_TEMP_OUT_L, 2, self._buffer)
         temp = ((self._buffer[1] << 8) | self._buffer[0]) >> 4
         return _twos_comp(temp, 12)
 
@@ -273,7 +274,7 @@ class LSM9DS1:
         # See discussion from:
         #  https://github.com/kriswiner/LSM9DS1/issues/3
         temp = self.read_temp_raw()
-        temp = 27.5 + temp/16
+        temp = 27.5 + temp / 16
         return temp
 
     def _read_u8(self, sensor_type, address):
