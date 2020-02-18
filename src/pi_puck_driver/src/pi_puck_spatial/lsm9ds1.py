@@ -90,7 +90,7 @@ class LSM9DS1:
         """Initialise the LSM9DS1."""
         self._bus = SMBus(i2c_bus)
         self._mag_address = mag_address
-        self.xg_address = xg_address
+        self._xg_address = xg_address
         self._buffer = bytearray(6)
 
         # soft reset & reboot accel/gyro
