@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Sensor driver for the LSM9DS1 IMU.
 
-Based on https://github.com/adafruit/Adafruit_CircuitPython_LSM9DS1.
+Based on https://github.com/adafruit/Adafruit_CircuitPython_LSM9DS1 with patches to use SMBus and to fix some minor
+inconsistencies compared to the datasheet.
 """
 
 import struct
@@ -24,7 +25,6 @@ _LSM9DS1_MAG_MGAUSS_16GAUSS = 0.58
 _LSM9DS1_GYRO_DPS_DIGIT_245DPS = 0.00875
 _LSM9DS1_GYRO_DPS_DIGIT_500DPS = 0.01750
 _LSM9DS1_GYRO_DPS_DIGIT_2000DPS = 0.07000
-_LSM9DS1_TEMP_LSB_DEGREE_CELSIUS = 8  # 1 degrees C = 8, 25 degrees = 200, etc.
 _LSM9DS1_REGISTER_WHO_AM_I_XG = 0x0F
 _LSM9DS1_REGISTER_CTRL_REG1_G = 0x10
 _LSM9DS1_REGISTER_CTRL_REG2_G = 0x11
@@ -94,7 +94,7 @@ def _twos_comp(val, bits):
 class LSM9DS1(object):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, i2c_bus=3, mag_address=0x1e, xg_address=0x6b):
+    def __init__(self, i2c_bus=3, mag_address=_LSM9DS1_ADDRESS_MAG, xg_address=_LSM9DS1_ADDRESS_ACCELGYRO):
         """Initialise the LSM9DS1."""
         self._bus = SMBus(i2c_bus)
         self._mag_address = mag_address

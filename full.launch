@@ -25,6 +25,9 @@
           <param name="sensor" value="5" />
         </node>
       </group>
+      <group ns="spatial">
+        <node name="imu" pkg="pi_puck_driver" type="imu_server.py" />
+      </group>
     </group>
   </group>
 </launch>

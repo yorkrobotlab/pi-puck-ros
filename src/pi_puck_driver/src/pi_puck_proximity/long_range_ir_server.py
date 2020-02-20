@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""ROS Node to expose a topics for the short range IR sensors on the Pi-puck."""
+"""ROS Node to expose a topic for one of the long range IR sensors on the Pi-puck."""
 
 # ROS imports
 import rospy
