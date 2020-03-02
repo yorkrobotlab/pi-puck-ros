@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Calibrate the magnetometer on the LSM9DS1."""
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -52,7 +53,7 @@ def calibrate(samples, interval, run_motors=True):
 
     if run_motors:
         bus = SMBus(I2C_CHANNEL)
-        start_left_steps = get_left_steps(bus, offset=2000)
+        start_left_steps = get_left_steps(bus)
         right_turn = 1000
         left_turn = 3000
 
@@ -92,6 +93,9 @@ def calibrate(samples, interval, run_motors=True):
         set_left_speed(bus, 0)
         set_right_speed(bus, 0)
 
+    sensor.close()
+    bus.close()
+
     x_sum = sum(map(lambda a: a[0], sample_values))
     y_sum = sum(map(lambda a: a[1], sample_values))
     z_sum = sum(map(lambda a: a[2], sample_values))
@@ -105,7 +109,7 @@ def main():
     """Application entry point."""
     argument_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 
-    argument_parser.add_argument("--samples", default=6000, type=int, help="Number of samples to take.")
+    argument_parser.add_argument("--samples", default=8000, type=int, help="Number of samples to take.")
     argument_parser.add_argument("--interval", default=0.05, type=float, help="Interval in seconds between samples.")
     argument_parser.add_argument("--output", default="./", help="Output location/file name.")
 
@@ -132,6 +136,9 @@ def main():
     if samples <= 0:
         print("Samples must be positive and nonzero")
         return 3
+
+    if samples > 100000:
+        print("Warning: overly large sample sizes may cause instability")
 
     print("Calibrating...")
 
