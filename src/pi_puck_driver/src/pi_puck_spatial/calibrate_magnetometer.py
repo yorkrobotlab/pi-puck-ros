@@ -73,7 +73,6 @@ def calibrate(samples, interval, run_motors=True):
             sample_values.append(sensor.magnetic)
 
         if run_motors:
-            print(get_left_steps(bus, offset=2000) - start_left_steps, )
             if not turning_left and not turning_right:
                 turning_left = True
                 set_left_speed(bus, 1)
@@ -106,7 +105,7 @@ def main():
     """Application entry point."""
     argument_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 
-    argument_parser.add_argument("--samples", default=3000, type=int, help="Number of samples to take.")
+    argument_parser.add_argument("--samples", default=6000, type=int, help="Number of samples to take.")
     argument_parser.add_argument("--interval", default=0.05, type=float, help="Interval in seconds between samples.")
     argument_parser.add_argument("--output", default="./", help="Output location/file name.")
 
@@ -134,9 +133,13 @@ def main():
         print("Samples must be positive and nonzero")
         return 3
 
+    print("Calibrating...")
+
     calibration_result = calibrate(samples, interval, run_motors=True)
     with open(output_path, "wb") as output_file_handle:
         dump(calibration_result, output_file_handle)
+
+    print("Done.")
 
     return 0
 
