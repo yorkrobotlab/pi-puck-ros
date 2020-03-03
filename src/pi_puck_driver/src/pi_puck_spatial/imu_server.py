@@ -16,9 +16,11 @@ from lsm9ds1 import LSM9DS1
 
 UNKNOWN_VARIANCE = 0
 
-# If accuracy is updated these need updating from the
+# If accuracy is updated these need updating from the datasheet
 LINEAR_ACCELERATION_COVARIANCE = [0.061, 0, 0, 0, 0.061, 0, 0, 0, 0.061]
 ANGULAR_VELOCITY_COVARIANCE = [0.00875, 0, 0, 0, 0.00875, 0, 0, 0, 0.00875]
+# This is an estimate of the average covariance, assuming a normal distribution.
+ORIENTATION_COVARIANCE = [0.139, 0, 0, 0, 0.139, 0, 0, 0, 0.139]
 
 # Rough estimate based on measurements with Pi-pucks
 CALIBRATION_DATA_DEFAULT = {"y": -3.10, "x": 0.15, "z": -1.70}
@@ -129,7 +131,8 @@ class PiPuckImuServer:
                     linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
                     angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
                     angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
-                    orientation=magnetometer_quaternion))
+                    orientation=magnetometer_quaternion,
+                    orientation_covariance=ORIENTATION_COVARIANCE))
 
             self._rate.sleep()
 
