@@ -40,8 +40,15 @@ class PiPuckImuServer:
 
         self._sensor = None
 
+        calibration_file = None
+
         if path.isfile("magnetometer_calibration.json"):
-            with open("magnetometer_calibration.json", "rb") as calibration_file_handle:
+            calibration_file = "magnetometer_calibration.json"
+        elif path.isfile(path.join(path.dirname(__file__), path.isfile("magnetometer_calibration.json"))):
+            calibration_file = path.join(path.dirname(__file__), path.isfile("magnetometer_calibration.json"))
+
+        if calibration_file:
+            with open(calibration_file, "rb") as calibration_file_handle:
                 self._calibration = load(calibration_file_handle)
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
@@ -86,14 +93,10 @@ class PiPuckImuServer:
                 x_y_direction = math.radians(180)
             else:  # x <= 0
                 x_y_direction = math.radians(0)
-        elif y > 0:
+        elif y < 0:
             x_y_direction = math.radians(90) - math.atan(x / y)
-        else:  # y < 0
+        else:  # y > 0
             x_y_direction = math.radians(270) - math.atan(x / y)
-
-        x_y_direction = math.radians(360) - x_y_direction
-
-        print(math.degrees(x_y_direction))
 
         return PiPuckImuServer.euler_to_quaternion(yaw=x_y_direction, pitch=0, roll=0)
 
@@ -116,6 +119,8 @@ class PiPuckImuServer:
             gyro_result = self._sensor.gyro
             gyro_x, gyro_y, gyro_z = map(lambda deg: deg * (math.pi / 180.0), gyro_result)
 
+            # Magnetometer values can be used to calculate our orientation rotation about the z axis (yaw).
+            # Futher work is needed to calculate pitch and roll from other available sensors.
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
