@@ -44,8 +44,8 @@ class PiPuckImuServer:
 
         if path.isfile("magnetometer_calibration.json"):
             calibration_file = "magnetometer_calibration.json"
-        elif path.isfile(path.join(path.dirname(__file__), path.isfile("magnetometer_calibration.json"))):
-            calibration_file = path.join(path.dirname(__file__), path.isfile("magnetometer_calibration.json"))
+        elif path.isfile(path.join(path.dirname(__file__), "magnetometer_calibration.json")):
+            calibration_file = path.join(path.dirname(__file__), "magnetometer_calibration.json")
 
         if calibration_file:
             with open(calibration_file, "rb") as calibration_file_handle:
