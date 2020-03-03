@@ -91,6 +91,8 @@ class PiPuckImuServer:
         else:  # y < 0
             x_y_direction = math.radians(270) - math.atan(x / y)
 
+        x_y_direction = math.radians(360) - x_y_direction
+
         print(math.degrees(x_y_direction))
 
         return PiPuckImuServer.euler_to_quaternion(yaw=x_y_direction, pitch=0, roll=0)
