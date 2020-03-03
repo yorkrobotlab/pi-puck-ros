@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+
+<robot name="pi_puck">
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder length="0.034" radius="0.035"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.02"/>
+            <material name="light_grey">
+                <color rgba="0.8 0.8 0.8 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <link name="right_wheel">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.02"/>
+            </geometry>
+            <origin rpy="0 1.57075 0"/>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_right_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <origin rpy="0 0 1.57075" xyz="0.0 -0.035 0.02"/>
+    </joint>
+
+    <link name="left_wheel">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.02"/>
+            </geometry>
+            <origin rpy="0 1.57075 0"/>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_left_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="left_wheel"/>
+        <origin rpy="0 0 1.57075" xyz="0.0 0.035 0.02"/>
+    </joint>
+
+    <link name="body_top">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.037"/>
+            </geometry>
+            <material name="green_pcb">
+                <color rgba="0.23 0.4 0.16 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_body_top" type="fixed">
+        <parent link="base_link"/>
+        <child link="body_top"/>
+        <origin xyz="0.0 0.0 0.037"/>
+    </joint>
+
+    <link name="interface_board">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.037"/>
+            </geometry>
+            <material name="green_pcb">
+                <color rgba="0.23 0.4 0.16 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_interface_board" type="fixed">
+        <parent link="body_top"/>
+        <child link="interface_board"/>
+        <origin xyz="0.0 0.0 0.010"/>
+    </joint>
+
+    <link name="pi_zero">
+        <visual>
+            <geometry>
+                <box size="0.030 0.065 0.002"/>
+            </geometry>
+            <material name="green_pcb">
+                <color rgba="0.23 0.4 0.16 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_pi_zero" type="fixed">
+        <parent link="interface_board"/>
+        <child link="pi_zero"/>
+        <origin xyz="0.0 0.0 0.0085"/>
+    </joint>
+
+    <link name="sensor_board">
+        <visual>
+            <geometry>
+                <box size="0.030 0.065 0.002"/>
+            </geometry>
+            <material name="green_pcb">
+                <color rgba="0.23 0.4 0.16 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="pi_zero_to_sensor_board" type="fixed">
+        <parent link="pi_zero"/>
+        <child link="sensor_board"/>
+        <origin xyz="0.0 0.0 0.005"/>
+    </joint>
+
+    <link name="tof_sensor_0">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_0" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_0"/>
+        <origin xyz="0.030 0.0 0.006"/>
+    </joint>
+
+    <link name="tof_sensor_3">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_3" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_3"/>
+        <origin xyz="-0.030 0.0 0.006" rpy="0 0 3.14159"/>
+    </joint>
+
+    <link name="tof_sensor_1">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_1" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_1"/>
+        <origin xyz="0.023 -0.023 0.006" rpy="0 0 -0.698132"/>
+    </joint>
+
+    <link name="tof_sensor_5">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_5" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_5"/>
+        <origin xyz="0.023 0.023 0.006" rpy="0 0 0.698132"/>
+    </joint>
+
+    <link name="tof_sensor_2">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_2" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_2"/>
+        <origin xyz="-0.023 -0.023 0.006" rpy="0 0 -2.44346"/>
+    </joint>
+
+    <link name="tof_sensor_4">
+        <visual>
+            <geometry>
+                <box size="0.005 0.006 0.010"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="interface_board_to_tof_sensor_4" type="fixed">
+        <parent link="interface_board"/>
+        <child link="tof_sensor_4"/>
+        <origin xyz="-0.023 0.023 0.006" rpy="0 0 2.44346"/>
+    </joint>
+
+</robot>

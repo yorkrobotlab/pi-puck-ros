@@ -65,7 +65,10 @@ class PiPuckImuServer:
 
     @staticmethod
     def euler_to_quaternion(yaw, pitch, roll):
-        """Convert euler angles of pitch, roll, and yaw to a quaternion."""
+        """Convert euler angles of pitch, roll, and yaw to a quaternion.
+
+        Based on code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles.
+        """
         cy = math.cos(yaw * 0.5)
         sy = math.sin(yaw * 0.5)
         cp = math.cos(pitch * 0.5)
