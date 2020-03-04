@@ -113,8 +113,9 @@ class PiPuckImuServer:
         while not rospy.is_shutdown():
             # Temperature is in degrees C so no conversion needed
             temperature_result = self._sensor.temperature
-            self._sensor_temperature_publisher.publish(
-                Temperature(temperature=temperature_result, variance=UNKNOWN_VARIANCE, frame_id=REFERENCE_FRAME_ID))
+            temperature_message = Temperature(temperature=temperature_result, variance=UNKNOWN_VARIANCE)
+            temperature_message.header.frame_id = REFERENCE_FRAME_ID
+            self._sensor_temperature_publisher.publish(temperature_message)
 
             # Acceleration is already in m/s^2 so no conversion needed,
             # just unpacking
@@ -131,14 +132,14 @@ class PiPuckImuServer:
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
-            self._sensor_imu_publisher.publish(
-                Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
-                    linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
-                    angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
-                    angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
-                    orientation=magnetometer_quaternion,
-                    orientation_covariance=ORIENTATION_COVARIANCE,
-                    frame_id=REFERENCE_FRAME_ID))
+            imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
+                              linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
+                              angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
+                              angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
+                              orientation=magnetometer_quaternion,
+                              orientation_covariance=ORIENTATION_COVARIANCE)
+            imu_message.header.frame_id = REFERENCE_FRAME_ID
+            self._sensor_imu_publisher.publish(imu_message)
 
             self._rate.sleep()
 
