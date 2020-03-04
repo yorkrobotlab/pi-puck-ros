@@ -25,6 +25,8 @@ ORIENTATION_COVARIANCE = [0.139, 0, 0, 0, 0.139, 0, 0, 0, 0.139]
 # Rough estimate based on measurements with Pi-pucks
 CALIBRATION_DATA_DEFAULT = {"y": -3.10, "x": 0.15, "z": -1.70}
 
+REFERENCE_FRAME_ID = "imu_sensor"
+
 
 class PiPuckImuServer:
     """ROS Node to publish data from the Pi-puck's IMU."""
@@ -112,7 +114,7 @@ class PiPuckImuServer:
             # Temperature is in degrees C so no conversion needed
             temperature_result = self._sensor.temperature
             self._sensor_temperature_publisher.publish(
-                Temperature(temperature=temperature_result, variance=UNKNOWN_VARIANCE))
+                Temperature(temperature=temperature_result, variance=UNKNOWN_VARIANCE, frame_id=REFERENCE_FRAME_ID))
 
             # Acceleration is already in m/s^2 so no conversion needed,
             # just unpacking
@@ -135,7 +137,8 @@ class PiPuckImuServer:
                     angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
                     angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
                     orientation=magnetometer_quaternion,
-                    orientation_covariance=ORIENTATION_COVARIANCE))
+                    orientation_covariance=ORIENTATION_COVARIANCE,
+                    frame_id=REFERENCE_FRAME_ID))
 
             self._rate.sleep()
 

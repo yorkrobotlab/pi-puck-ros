@@ -220,4 +220,21 @@
         <origin xyz="-0.023 0.023 0.006" rpy="0 0 2.44346"/>
     </joint>
 
+    <link name="imu_sensor">
+        <visual>
+            <geometry>
+                <box size="0.005 0.005 0.001"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="sensor_board_to_imu_sensor" type="fixed">
+        <parent link="sensor_board"/>
+        <child link="imu_sensor"/>
+        <origin xyz="0 0 0.001"/>
+    </joint>
+
 </robot>
