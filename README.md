@@ -25,8 +25,8 @@ The following features are currently supported:
 
 - [ ] Navigation
   - [ ] Spatial
-    - [ ] IMU
-    - [ ] Accelerometer
+    - [x] IMU (Orientation is only 2 dimensional, proper implementation may happen if time permits)
+    - [ ] Accelerometer (Not exposed by Pi-puck e-puck firmware, changes to firmware needed if we want to expose this)
   - [x] Motors
     - [x] Speed
     - [x] Steps 
