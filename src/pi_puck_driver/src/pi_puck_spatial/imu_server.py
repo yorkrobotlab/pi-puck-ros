@@ -41,7 +41,8 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
+        self._raw_rate = int(rospy.get_param('~rate', 60))
+        self._rate = rospy.Rate(self._raw_rate)
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
         self._sensor_temperature_publisher = rospy.Publisher('imu/temperature', Temperature, queue_size=10)
@@ -61,7 +62,7 @@ class PiPuckImuServer:
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
 
-        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / 10.0)
+        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._raw_rate))
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
