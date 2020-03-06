@@ -24,7 +24,7 @@ This package has only been tested with ROS Melodic.
 The following features are currently supported:
 
 - [x] Navigation
-  -[x] Spatial
+  - [x] Spatial
     - [x] IMU (Z-rotation mode and full 3-axis mode)
     - [ ] Accelerometer (Not exposed by Pi-puck e-puck firmware, changes to firmware needed if we want to expose this)
     - [ ] Transform server
