@@ -13,7 +13,9 @@ from sensor_msgs.msg import Imu, Temperature
 
 # Standard imports
 from lsm9ds1 import LSM9DS1
-from madgwick_py.madgwickahrs import MadgwickAHRS
+
+# scikit-kinematics==0.6.3 was the last version to support python 2
+from skinematics.imus import kalman
 
 UNKNOWN_VARIANCE = 0
 
@@ -38,8 +40,7 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
-        self._raw_rate = int(rospy.get_param('~rate', 5))
-        self._rate = rospy.Rate(self._raw_rate)
+        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
         self._sensor_temperature_publisher = rospy.Publisher('imu/temperature', Temperature, queue_size=10)
@@ -58,8 +59,6 @@ class PiPuckImuServer:
                 self._calibration = load(calibration_file_handle)
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
-
-        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / self._raw_rate)
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -139,9 +138,9 @@ class PiPuckImuServer:
             magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
                                    magnetometer_result[1] - self._calibration["y"],
                                    magnetometer_result[2] - self._calibration["z"])
-            self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
+            orientation_filter_result = kalman(10.0, acceleration_result, gyro_result, magnetometer_result)
 
-            filter_w, filter_x, filter_y, filter_z = self._orientation_filter.quaternion
+            filter_w, filter_x, filter_y, filter_z = orientation_filter_result
             orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
 
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
