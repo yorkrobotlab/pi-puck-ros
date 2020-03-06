@@ -136,6 +136,9 @@ class PiPuckImuServer:
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
+            magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
+                                   magnetometer_result[1] - self._calibration["y"],
+                                   magnetometer_result[2] - self._calibration["z"])
             self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
 
             filter_w, filter_x, filter_y, filter_z = self._orientation_filter.quaternion
