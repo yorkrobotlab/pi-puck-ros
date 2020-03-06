@@ -138,7 +138,8 @@ class PiPuckImuServer:
 
             self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
 
-            orientation_quaternion = self._orientation_filter.quaternion
+            filter_w, filter_x, filter_y, filter_z = self._orientation_filter.quaternion
+            orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
 
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
                               linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
