@@ -1,0 +1,3 @@
+[submodule "src/pi_puck_driver/src/pi_puck_spatial/madgwick_py"]
+	path = src/pi_puck_driver/src/pi_puck_spatial/madgwick_py
+	url = https://github.com/morgil/madgwick_py.git
