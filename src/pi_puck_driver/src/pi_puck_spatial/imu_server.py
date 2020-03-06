@@ -13,6 +13,7 @@ from sensor_msgs.msg import Imu, Temperature
 
 # Standard imports
 from lsm9ds1 import LSM9DS1
+from madgwick_py.madgwickahrs import MadgwickAHRS
 
 UNKNOWN_VARIANCE = 0
 
@@ -37,7 +38,8 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 5))
+        self._raw_rate = int(rospy.get_param('~rate', 5))
+        self._rate = rospy.Rate(self._raw_rate)
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
         self._sensor_temperature_publisher = rospy.Publisher('imu/temperature', Temperature, queue_size=10)
@@ -56,6 +58,8 @@ class PiPuckImuServer:
                 self._calibration = load(calibration_file_handle)
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
+
+        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / self._raw_rate)
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -132,13 +136,18 @@ class PiPuckImuServer:
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
+            self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
+
+            orientation_quaternion = self._orientation_filter.quaternion
+
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
                               linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
                               angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
                               angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
-                              orientation=magnetometer_quaternion,
+                              orientation=orientation_quaternion,
                               orientation_covariance=ORIENTATION_COVARIANCE)
             imu_message.header.frame_id = REFERENCE_FRAME_ID
+
             self._sensor_imu_publisher.publish(imu_message)
 
             self._rate.sleep()

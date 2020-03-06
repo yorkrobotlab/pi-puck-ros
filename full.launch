@@ -1,5 +1,7 @@
 <launch>
   <group ns="$(optenv ROBOT_NAME pi_puck)">
+    <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>
+    <param name="tf_prefix" value="$(optenv ROBOT_NAME pi_puck)"/>
     <group ns="navigation">
       <node name="motors" pkg="pi_puck_driver" type="motor_server.py" />
       <group ns="proximity">
