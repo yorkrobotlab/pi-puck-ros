@@ -14,8 +14,9 @@ from sensor_msgs.msg import Imu, Temperature
 # Standard imports
 from lsm9ds1 import LSM9DS1
 
-# scikit-kinematics==0.6.3 was the last version to support python 2
-from skinematics.imus import kalman
+import numpy
+
+# from kalman import Kalman
 
 UNKNOWN_VARIANCE = 0
 
@@ -59,6 +60,8 @@ class PiPuckImuServer:
                 self._calibration = load(calibration_file_handle)
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
+
+        # self._orientation_filter = Kalman()
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -135,19 +138,20 @@ class PiPuckImuServer:
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
-            magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
-                                   magnetometer_result[1] - self._calibration["y"],
-                                   magnetometer_result[2] - self._calibration["z"])
-            orientation_filter_result = kalman(10.0, acceleration_result, gyro_result, magnetometer_result)
+            # magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
+            #                       magnetometer_result[1] - self._calibration["y"],
+            #                       magnetometer_result[2] - self._calibration["z"])
+            # orientation_filter_result = kalman_quat(10.0, numpy.asarray([acceleration_result]), numpy.asarray([gyro_result]), numpy.asarray([magnetometer_result]))
 
-            filter_w, filter_x, filter_y, filter_z = orientation_filter_result
-            orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
+            # print(orientation_filter_result[0])
+            # filter_w, filter_x, filter_y, filter_z = orientation_filter_result[0]
+            # orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
 
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
                               linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
                               angular_velocity_covariance=ANGULAR_VELOCITY_COVARIANCE,
                               angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
-                              orientation=orientation_quaternion,
+                              orientation=magnetometer_quaternion,
                               orientation_covariance=ORIENTATION_COVARIANCE)
             imu_message.header.frame_id = REFERENCE_FRAME_ID
 
