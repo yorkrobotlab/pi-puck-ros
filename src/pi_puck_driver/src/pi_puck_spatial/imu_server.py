@@ -61,7 +61,7 @@ class PiPuckImuServer:
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
 
-        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0/10.0)
+        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / 10.0)
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -137,6 +137,11 @@ class PiPuckImuServer:
             # Futher work is needed to calculate pitch and roll from other available sensors.
             magnetometer_result = self._sensor.magnetic
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
+
+            # Apply calibration to magnetometer result
+            magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
+                                   magnetometer_result[1] - self._calibration["y"],
+                                   magnetometer_result[2] - self._calibration["z"])
 
             self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
 
