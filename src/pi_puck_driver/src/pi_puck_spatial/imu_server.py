@@ -41,7 +41,7 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
-        self._raw_rate = int(rospy.get_param('~rate', 60))
+        self._raw_rate = int(rospy.get_param('~rate', 15))
         self._rate = rospy.Rate(self._raw_rate)
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
