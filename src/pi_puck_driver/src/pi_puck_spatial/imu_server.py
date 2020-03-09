@@ -5,6 +5,7 @@
 import math
 from os import path
 from json import load
+from threading import Thread
 
 # ROS imports
 import rospy
@@ -27,7 +28,23 @@ ANGULAR_VELOCITY_COVARIANCE = [0.00875, 0, 0, 0, 0.00875, 0, 0, 0, 0.00875]
 ORIENTATION_COVARIANCE = [0.139, 0, 0, 0, 0.139, 0, 0, 0, 0.139]
 
 # Rough estimate based on measurements with Pi-pucks
-CALIBRATION_DATA_DEFAULT = {"y": -3.10, "x": 0.15, "z": -1.70}
+CALIBRATION_DATA_DEFAULT = {
+    "magnetometer": {
+        "y": -3.10,
+        "x": 0.15,
+        "z": -1.70
+    },
+    "accelerometer": {
+        "y": 0,
+        "x": 0,
+        "z": 0
+    },
+    "gyro": {
+        "y": 0,
+        "x": 0,
+        "z": 0
+    }
+}
 
 REFERENCE_FRAME_ID = "imu_sensor"
 
@@ -41,8 +58,15 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
-        self._raw_rate = int(rospy.get_param('~rate', 15))
-        self._rate = rospy.Rate(self._raw_rate)
+        self._tf_prefix = rospy.get_param("tf_prefix", None)
+
+        if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
+            self._tf_prefix += "/"
+
+        self._rate = rospy.Rate(rospy.get_param('~rate', 15))
+
+        self._raw_sample_rate = int(rospy.get_param('~sample_rate', 64))
+        self._sample_rate = rospy.Rate(self._raw_sample_rate)
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
         self._sensor_temperature_publisher = rospy.Publisher('imu/temperature', Temperature, queue_size=10)
@@ -51,10 +75,10 @@ class PiPuckImuServer:
 
         calibration_file = None
 
-        if path.isfile("magnetometer_calibration.json"):
-            calibration_file = "magnetometer_calibration.json"
-        elif path.isfile(path.join(path.dirname(__file__), "magnetometer_calibration.json")):
-            calibration_file = path.join(path.dirname(__file__), "magnetometer_calibration.json")
+        if path.isfile("calibration.json"):
+            calibration_file = "calibration.json"
+        elif path.isfile(path.join(path.dirname(__file__), "calibration.json")):
+            calibration_file = path.join(path.dirname(__file__), "calibration.json")
 
         if calibration_file:
             with open(calibration_file, "rb") as calibration_file_handle:
@@ -62,7 +86,7 @@ class PiPuckImuServer:
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
 
-        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._raw_rate))
+        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._sample_rate))
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -98,7 +122,8 @@ class PiPuckImuServer:
         Currently only supports yaw calculation e.g. rotation about the z axis.
         """
         raw_x, raw_y, raw_z = magnetometer_reading
-        cal_x, cal_y, cal_z = self._calibration["x"], self._calibration["y"], self._calibration["z"]
+        cal_x, cal_y, cal_z = self._calibration["magnetometer"]["x"], self._calibration["magnetometer"][
+            "y"], self._calibration["magnetometer"]["z"]
 
         x, y, z = raw_x - cal_x, raw_y - cal_y, raw_z - cal_z
 
@@ -114,25 +139,23 @@ class PiPuckImuServer:
 
         return PiPuckImuServer.euler_to_quaternion(yaw=x_y_direction, pitch=0, roll=0)
 
-    def run(self):
-        """Run the sensor server."""
-        self.open_sensor()
+    def _sample_thread(self):
+        """Run sampling thread, to be run in a separate thread to handle sampling of sensors."""
         while not rospy.is_shutdown():
-            # Temperature is in degrees C so no conversion needed
-            temperature_result = self._sensor.temperature
-            temperature_message = Temperature(temperature=temperature_result, variance=UNKNOWN_VARIANCE)
-            temperature_message.header.frame_id = REFERENCE_FRAME_ID
-            self._sensor_temperature_publisher.publish(temperature_message)
-
             # Acceleration is already in m/s^2 so no conversion needed,
             # just unpacking
             acceleration_result = self._sensor.acceleration
             acceleration_x, acceleration_y, acceleration_z = acceleration_result
+            acceleration_x, acceleration_y, acceleration_z = acceleration_x - self._calibration["acceleration"][
+                "x"], acceleration_y - self._calibration["acceleration"]["y"], acceleration_z - self._calibration[
+                    "acceleration"]["z"]
 
             # Gyro is in degrees/second so conversion to rads/sec is needed,
             # as well as unpacking
             gyro_result = map(lambda deg: deg * (math.pi / 180.0), self._sensor.gyro)
             gyro_x, gyro_y, gyro_z = gyro_result
+            gyro_x, gyro_y, gyro_z = gyro_x - self._calibration["gyro"]["x"], gyro_y - self._calibration["gyro"][
+                "y"], gyro_z - self._calibration["gyro"]["z"]
 
             # Magnetometer values can be used to calculate our orientation rotation about the z axis (yaw).
             # Futher work is needed to calculate pitch and roll from other available sensors.
@@ -140,14 +163,35 @@ class PiPuckImuServer:
             magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
             # Apply calibration to magnetometer result
-            magnetometer_result = (magnetometer_result[0] - self._calibration["x"],
-                                   magnetometer_result[1] - self._calibration["y"],
-                                   magnetometer_result[2] - self._calibration["z"])
+            magnetometer_result = (magnetometer_result[0] - self._calibration["magnetometer"]["x"],
+                                   magnetometer_result[1] - self._calibration["magnetometer"]["y"],
+                                   magnetometer_result[2] - self._calibration["magnetometer"]["z"])
 
             self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
 
-            fitler_w, filter_x, filter_y, fitler_z = self._orientation_filter.quaternion
-            orientation_quaternion = Quaternion(w=fitler_w, x=filter_x, y=filter_y, z=fitler_z)
+            filter_w, filter_x, filter_y, filter_z = self._orientation_filter.quaternion
+            self._orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
+
+            self._gyro_result = (gyro_x, gyro_y, gyro_z)
+            self._acceleration_result = (acceleration_x, acceleration_y, acceleration_z)
+
+            self._sample_rate.sleep()
+
+    def run(self):
+        """Run the sensor server."""
+        self.open_sensor()
+
+        sensor_sample_thread = Thread(target=self._sample_thread)
+        sensor_sample_thread.run()
+
+        while not rospy.is_shutdown():
+            # Temperature is in degrees C so no conversion needed
+            temperature_message = Temperature(temperature=self._sensor.temperature, variance=UNKNOWN_VARIANCE)
+            temperature_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID
+            self._sensor_temperature_publisher.publish(temperature_message)
+
+            acceleration_x, acceleration_y, acceleration_z = self._acceleration_result
+            gyro_x, gyro_y, gyro_z = self._gyro_result
 
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
                               linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
@@ -155,11 +199,13 @@ class PiPuckImuServer:
                               angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
                               orientation=orientation_quaternion,
                               orientation_covariance=ORIENTATION_COVARIANCE)
-            imu_message.header.frame_id = REFERENCE_FRAME_ID
+            imu_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID
 
             self._sensor_imu_publisher.publish(imu_message)
 
             self._rate.sleep()
+
+        sensor_sample_thread.join()
 
 
 if __name__ == "__main__":

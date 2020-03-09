@@ -43,13 +43,13 @@ def set_right_speed(bus, speed):
 
 
 def get_left_steps(bus, offset=0):
-    """get left motor steps."""
+    """Get left motor steps."""
     return int(bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS)) + offset
 
 
 def calibrate(samples, interval, run_motors=True):
     """Run calibration."""
-    sample_values = []
+    magnetometer_sample_values = []
 
     if run_motors:
         bus = SMBus(I2C_CHANNEL)
@@ -65,13 +65,13 @@ def calibrate(samples, interval, run_motors=True):
         turning_left = False
         turning_right = False
 
-    while len(sample_values) < samples:
+    while len(magnetometer_sample_values) < samples:
         current_time = time()
 
         # If time to take a sample
         if time_of_last_sample + interval >= current_time:
             time_of_last_sample = current_time
-            sample_values.append(sensor.magnetic)
+            magnetometer_sample_values.append(sensor.magnetic)
 
         if run_motors:
             if not turning_left and not turning_right:
@@ -93,16 +93,52 @@ def calibrate(samples, interval, run_motors=True):
         set_left_speed(bus, 0)
         set_right_speed(bus, 0)
 
-    sensor.close()
     bus.close()
 
-    x_sum = sum(map(lambda a: a[0], sample_values))
-    y_sum = sum(map(lambda a: a[1], sample_values))
-    z_sum = sum(map(lambda a: a[2], sample_values))
+    magnetometer_x_sum = sum(map(lambda a: a[0], magnetometer_sample_values))
+    magnetometer_y_sum = sum(map(lambda a: a[1], magnetometer_sample_values))
+    magnetometer_z_sum = sum(map(lambda a: a[2], magnetometer_sample_values))
 
-    count = float(len(sample_values))
+    del magnetometer_sample_values
 
-    return {"x": x_sum / count, "y": y_sum / count, "z": z_sum / count}
+    magnetometer_count = float(len(magnetometer_sample_values))
+
+    accelerometer_sample_values = []
+    gyro_sample_values = []
+
+    while len(accelerometer_sample_values) < samples:
+        accelerometer_sample_values.append(sensor.acceleration)
+        gyro_sample_values.append(map(lambda deg: deg * (math.pi / 180.0), sensor.gyro))
+
+    accelerometer_x_sum = sum(map(lambda a: a[0], accelerometer_sample_values))
+    accelerometer_y_sum = sum(map(lambda a: a[1], accelerometer_sample_values))
+    accelerometer_z_sum = sum(map(lambda a: a[2], accelerometer_sample_values))
+
+    gyro_x_sum = sum(map(lambda a: a[0], gyro_sample_values))
+    gyro_y_sum = sum(map(lambda a: a[1], gyro_sample_values))
+    gyro_z_sum = sum(map(lambda a: a[2], gyro_sample_values))
+
+    sensor.close()
+
+    samples = float(samples)
+
+    return {
+        "magnetometer": {
+            "x": magnetometer_x_sum / magnetometer_count,
+            "y": magnetometer_y_sum / magnetometer_count,
+            "z": magnetometer_z_sum / magnetometer_count
+        },
+        "accelerometer": {
+            "x": accelerometer_x_sum / samples
+            "y": accelerometer_y_sum / samples
+            "z": (accelerometer_z_sum / samples) - 9.80665
+        },
+        "gyro": {
+            "x": gyro_x_sum / samples
+            "y": gyro_y_sum / samples
+            "z": gyro_z_sum / samples
+        }
+    }
 
 
 def main():
