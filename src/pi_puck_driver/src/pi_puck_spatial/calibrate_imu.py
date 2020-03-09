@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 """Calibrate the magnetometer on the LSM9DS1."""
 
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from sys import exit
+import math
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from json import dump
 from os import path
-from time import time, sleep
+from sys import exit
+from time import sleep, time
 
 from lsm9ds1 import LSM9DS1
 from smbus import SMBus
@@ -99,9 +100,9 @@ def calibrate(samples, interval, run_motors=True):
     magnetometer_y_sum = sum(map(lambda a: a[1], magnetometer_sample_values))
     magnetometer_z_sum = sum(map(lambda a: a[2], magnetometer_sample_values))
 
-    del magnetometer_sample_values
-
     magnetometer_count = float(len(magnetometer_sample_values))
+
+    del magnetometer_sample_values
 
     accelerometer_sample_values = []
     gyro_sample_values = []
@@ -129,13 +130,13 @@ def calibrate(samples, interval, run_motors=True):
             "z": magnetometer_z_sum / magnetometer_count
         },
         "accelerometer": {
-            "x": accelerometer_x_sum / samples
-            "y": accelerometer_y_sum / samples
+            "x": accelerometer_x_sum / samples,
+            "y": accelerometer_y_sum / samples,
             "z": (accelerometer_z_sum / samples) - 9.80665
         },
         "gyro": {
-            "x": gyro_x_sum / samples
-            "y": gyro_y_sum / samples
+            "x": gyro_x_sum / samples,
+            "y": gyro_y_sum / samples,
             "z": gyro_z_sum / samples
         }
     }
@@ -155,7 +156,7 @@ def main():
     output_path = path.abspath(output_path)
 
     if path.isdir(output_path):
-        output_path = path.join(output_path, "magnetometer_calibration.json")
+        output_path = path.join(output_path, "calibration.json")
 
     if not path.isdir(path.dirname(output_path)):
         print("Output directory doesn't exist.")

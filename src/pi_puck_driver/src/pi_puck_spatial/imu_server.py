@@ -30,23 +30,24 @@ ORIENTATION_COVARIANCE = [0.139, 0, 0, 0, 0.139, 0, 0, 0, 0.139]
 # Rough estimate based on measurements with Pi-pucks
 CALIBRATION_DATA_DEFAULT = {
     "magnetometer": {
-        "y": -3.10,
-        "x": 0.15,
-        "z": -1.70
-    },
-    "accelerometer": {
-        "y": 0,
-        "x": 0,
-        "z": 0
+        "y": -2.981,
+        "x": 0.187,
+        "z": -1.628
     },
     "gyro": {
-        "y": 0,
-        "x": 0,
-        "z": 0
+        "y": 0.0211,
+        "x": -0.0101,
+        "z": 0.00372
+    },
+    "accelerometer": {
+        "y": -0.441,
+        "x": -0.391,
+        "z": -0.200
     }
 }
 
 REFERENCE_FRAME_ID = "imu_sensor"
+AHRS_BETA = 4
 
 
 class PiPuckImuServer:
@@ -63,9 +64,9 @@ class PiPuckImuServer:
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 15))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
 
-        self._raw_sample_rate = int(rospy.get_param('~sample_rate', 64))
+        self._raw_sample_rate = int(rospy.get_param('~sample_rate', 128))
         self._sample_rate = rospy.Rate(self._raw_sample_rate)
 
         self._sensor_imu_publisher = rospy.Publisher('imu/imu', Imu, queue_size=10)
@@ -86,7 +87,10 @@ class PiPuckImuServer:
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
 
-        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._sample_rate))
+        self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._raw_sample_rate), beta=AHRS_BETA)
+        self._acceleration_result = (0, 0, 0)
+        self._orientation_quaternion = Quaternion(w=1, x=0, y=0, z=0)
+        self._gyro_result = (0, 0, 0)
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -146,9 +150,9 @@ class PiPuckImuServer:
             # just unpacking
             acceleration_result = self._sensor.acceleration
             acceleration_x, acceleration_y, acceleration_z = acceleration_result
-            acceleration_x, acceleration_y, acceleration_z = acceleration_x - self._calibration["acceleration"][
-                "x"], acceleration_y - self._calibration["acceleration"]["y"], acceleration_z - self._calibration[
-                    "acceleration"]["z"]
+            acceleration_x, acceleration_y, acceleration_z = acceleration_x - self._calibration["accelerometer"][
+                "x"], acceleration_y - self._calibration["accelerometer"]["y"], acceleration_z - self._calibration[
+                    "accelerometer"]["z"]
 
             # Gyro is in degrees/second so conversion to rads/sec is needed,
             # as well as unpacking
@@ -160,14 +164,19 @@ class PiPuckImuServer:
             # Magnetometer values can be used to calculate our orientation rotation about the z axis (yaw).
             # Futher work is needed to calculate pitch and roll from other available sensors.
             magnetometer_result = self._sensor.magnetic
-            magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
+            # magnetometer_quaternion = self.calculate_heading_quaternion(magnetometer_result)
 
             # Apply calibration to magnetometer result
             magnetometer_result = (magnetometer_result[0] - self._calibration["magnetometer"]["x"],
                                    magnetometer_result[1] - self._calibration["magnetometer"]["y"],
                                    magnetometer_result[2] - self._calibration["magnetometer"]["z"])
 
+            previous_orientation_quaternion = self._orientation_filter.quaternion
             self._orientation_filter.update(gyro_result, acceleration_result, magnetometer_result)
+
+            if any(map(math.isnan, self._orientation_filter.quaternion)):
+                self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._raw_sample_rate),
+                                                        quaternion=previous_orientation_quaternion, beta=AHRS_BETA)
 
             filter_w, filter_x, filter_y, filter_z = self._orientation_filter.quaternion
             self._orientation_quaternion = Quaternion(w=filter_w, x=filter_x, y=filter_y, z=filter_z)
@@ -182,16 +191,17 @@ class PiPuckImuServer:
         self.open_sensor()
 
         sensor_sample_thread = Thread(target=self._sample_thread)
-        sensor_sample_thread.run()
+        sensor_sample_thread.start()
 
         while not rospy.is_shutdown():
             # Temperature is in degrees C so no conversion needed
             temperature_message = Temperature(temperature=self._sensor.temperature, variance=UNKNOWN_VARIANCE)
-            temperature_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID
+            temperature_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID if self._tf_prefix else REFERENCE_FRAME_ID
             self._sensor_temperature_publisher.publish(temperature_message)
 
             acceleration_x, acceleration_y, acceleration_z = self._acceleration_result
             gyro_x, gyro_y, gyro_z = self._gyro_result
+            orientation_quaternion = self._orientation_quaternion
 
             imu_message = Imu(linear_acceleration_covariance=LINEAR_ACCELERATION_COVARIANCE,
                               linear_acceleration=Vector3(x=acceleration_x, y=acceleration_y, z=acceleration_z),
@@ -199,7 +209,7 @@ class PiPuckImuServer:
                               angular_velocity=Vector3(x=gyro_x, y=gyro_y, z=gyro_z),
                               orientation=orientation_quaternion,
                               orientation_covariance=ORIENTATION_COVARIANCE)
-            imu_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID
+            imu_message.header.frame_id = self._tf_prefix + REFERENCE_FRAME_ID if self._tf_prefix else REFERENCE_FRAME_ID
 
             self._sensor_imu_publisher.publish(imu_message)
 
