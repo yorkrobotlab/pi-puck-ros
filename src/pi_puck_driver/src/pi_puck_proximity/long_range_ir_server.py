@@ -28,6 +28,7 @@ MAX_RANGES = {SHORT_RANGE: 1360, MEDIUM_RANGE: 2900, LONG_RANGE: 3600}
 MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
 REFERENCE_FRAME_ID = "tof_sensor_{}"
+FOV = 0.471239  # 27 degrees
 
 
 class PiPuckTOFSensorServer:
@@ -105,7 +106,8 @@ class PiPuckTOFSensorServer:
             range_result = Range(radiation_type=Range.INFRARED,
                                  min_range=MIN_RANGES[self._distance_mode] / 1000.0,
                                  max_range=MAX_RANGES[self._distance_mode] / 1000.0,
-                                 range=self.read_sensor())
+                                 range=self.read_sensor(),
+                                 field_of_view=FOV)
             range_result.header.frame_id = self._tf_reference_frame
             self._sensor_publisher.publish(range_result)
             self._rate.sleep()
