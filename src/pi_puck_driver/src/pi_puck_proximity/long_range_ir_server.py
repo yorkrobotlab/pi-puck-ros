@@ -102,6 +102,7 @@ class PiPuckTOFSensorServer:
                                  min_range=MIN_RANGES[self._distance_mode] / 1000.0,
                                  max_range=MAX_RANGES[self._distance_mode] / 1000.0,
                                  range=self.read_sensor())
+            range_result.header.frame_id = self._tf_reference_frame
             self._sensor_publisher.publish(range_result)
             self._rate.sleep()
 
