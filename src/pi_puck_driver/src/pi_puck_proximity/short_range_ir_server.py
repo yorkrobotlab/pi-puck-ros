@@ -24,8 +24,8 @@ IR5_REFLECTED = 12
 IR6_REFLECTED = 13
 IR7_REFLECTED = 14
 
-IRX_REFLECTED = (IR0_REFLECTED, IR1_REFLECTED, IR2_REFLECTED, IR3_REFLECTED, IR4_REFLECTED, IR5_REFLECTED,
-                 IR6_REFLECTED, IR7_REFLECTED)
+IRX_REFLECTED = (IR0_REFLECTED, IR1_REFLECTED, IR2_REFLECTED, IR3_REFLECTED, IR4_REFLECTED,
+                 IR5_REFLECTED, IR6_REFLECTED, IR7_REFLECTED)
 
 IR0_AMBIENT = 15
 IR1_AMBIENT = 16
@@ -36,17 +36,20 @@ IR5_AMBIENT = 20
 IR6_AMBIENT = 21
 IR7_AMBIENT = 22
 
-IRX_AMBIENT = (IR0_AMBIENT, IR1_AMBIENT, IR2_AMBIENT, IR3_AMBIENT, IR4_AMBIENT, IR5_AMBIENT, IR6_AMBIENT, IR7_AMBIENT)
+IRX_AMBIENT = (IR0_AMBIENT, IR1_AMBIENT, IR2_AMBIENT, IR3_AMBIENT, IR4_AMBIENT, IR5_AMBIENT,
+               IR6_AMBIENT, IR7_AMBIENT)
 
 IR_SENSOR_ANGLES = (0, 45, 90, 135, 180, 225, 270, 315)
 
 IR_SENSOR_COUNT = 8
 
+REFERENCE_FRAME_ID = "reflectance_sensor_{}"
+
 BUS = SMBus(I2C_CHANNEL)
 
 
 def calculate_distance(x):
-    """Calculates an estimate of the range in metres."""
+    """Calculate an estimate of the range in metres."""
     try:
         result_in_mm = -(1250000.0 * math.log((20.0 * x) / 116727.0)) / 108221.0
         result = round(result_in_mm, 2) / 1000.0
@@ -72,14 +75,28 @@ def pi_puck_short_range_ir_server():
     rospy.on_shutdown(close_bus)
     BUS.write_word_data(EPUCK_I2C_ADDR, IR_CONTROL, 1)  # Turn IR sensors on
 
+    rospy.init_node("short_range_ir")
+
     ir_proximity_publishers = {}
+    ir_proximity_frame_ids = {}
+
+    tf_prefix_key = rospy.search_param("tf_prefix")
+    if tf_prefix_key:
+        tf_prefix = rospy.get_param(tf_prefix_key, None)
+    else:
+        tf_prefix = None
+    if tf_prefix is not None and not tf_prefix.endswith("/"):
+        tf_prefix += "/"
+
+    reference_frame_id_template = REFERENCE_FRAME_ID
+    if tf_prefix:
+        reference_frame_id_template = tf_prefix + reference_frame_id_template
 
     for ir_sensor in range(IR_SENSOR_COUNT):
         ir_proximity_publishers[ir_sensor] = rospy.Publisher('short_range_ir/{}'.format(ir_sensor),
                                                              Range,
                                                              queue_size=10)
-
-    rospy.init_node("short_range_ir")
+        ir_proximity_frame_ids[ir_sensor] = reference_frame_id_template.format(ir_sensor)
 
     rate = rospy.Rate(rospy.get_param('~rate', 5))
 
@@ -92,6 +109,7 @@ def pi_puck_short_range_ir_server():
                                  min_range=0,
                                  max_range=0.1,
                                  range=converted_distance_reading)
+            range_result.header.frame_id = ir_proximity_frame_ids[ir_sensor]
             ir_proximity_publishers[ir_sensor].publish(range_result)
         rate.sleep()
 
