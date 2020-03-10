@@ -60,7 +60,7 @@ def calculate_distance(x):
 
     if result < 0.005:
         result = -float("inf")
-    elif result > 0.05:
+    elif result > 0.045:
         result = float("inf")
 
     return result
@@ -108,8 +108,8 @@ def pi_puck_short_range_ir_server():
             ambient_raw = int(BUS.read_word_data(EPUCK_I2C_ADDR, IRX_AMBIENT[ir_sensor]))
             converted_distance_reading = calculate_distance(reflected_raw - ambient_raw)
             range_result = Range(radiation_type=Range.INFRARED,
-                                 min_range=0,
-                                 max_range=0.1,
+                                 min_range=0.005,
+                                 max_range=0.045,
                                  range=converted_distance_reading,
                                  field_of_view=FOV)
             range_result.header.frame_id = ir_proximity_frame_ids[ir_sensor]
