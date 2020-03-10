@@ -39,7 +39,11 @@ class PiPuckTOFSensorServer:
 
         rospy.init_node("long_range_ir")
 
-        tf_prefix = rospy.get_param("tf_prefix", None)
+        tf_prefix_key = rospy.search_param("tf_prefix")
+        if tf_prefix_key:
+            tf_prefix = rospy.get_param(tf_prefix_key, None)
+        else:
+            tf_prefix = None
         if tf_prefix is not None and not tf_prefix.endswith("/"):
             tf_prefix += "/"
 

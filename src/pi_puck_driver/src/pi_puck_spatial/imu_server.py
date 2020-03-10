@@ -63,7 +63,12 @@ class PiPuckImuServer:
                                                                 True))
         self._remove_gravity = bool(rospy.get_param("~remove_gravity", False))
 
-        self._tf_prefix = rospy.get_param("tf_prefix", None)
+        tf_prefix_key = rospy.search_param("tf_prefix")
+        if tf_prefix_key:
+            self._tf_prefix = rospy.get_param(tf_prefix_key, None)
+        else:
+            self._tf_prefix = None
+        self._tf_prefix = rospy.get_param(tf_prefix_key, None)
 
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
