@@ -27,12 +27,21 @@ MAX_RANGES = {SHORT_RANGE: 1360, MEDIUM_RANGE: 2900, LONG_RANGE: 3600}
 # In Millimetres
 MIN_RANGES = {SHORT_RANGE: 4, MEDIUM_RANGE: 4, LONG_RANGE: 4}
 
+REFERENCE_FRAME_ID = "tof_sensor_{}"
+
 
 class PiPuckTOFSensorServer:
+    """ROS node to publish time of flight sensor readings."""
+
     def __init__(self):
+        """Initialise sensor."""
         rospy.on_shutdown(self.close_sensor)
 
         rospy.init_node("long_range_ir")
+
+        tf_prefix = rospy.get_param("tf_prefix", None)
+        if tf_prefix is not None and not tf_prefix.endswith("/"):
+            tf_prefix += "/"
 
         self._rate_raw = float(rospy.get_param('~rate', 1))
 
@@ -41,14 +50,22 @@ class PiPuckTOFSensorServer:
         sensor_index = int(rospy.get_param('~sensor', 0))
         mode = rospy.get_param('~mode', "short")
 
+        self._tf_reference_frame = REFERENCE_FRAME_ID.format(sensor_index)
+
+        if tf_prefix:
+            self._tf_reference_frame = tf_prefix + self._tf_reference_frame
+
         if mode in RANGES:
             self._distance_mode = RANGES[mode]
         else:
             self._distance_mode = mode
 
-        self._sensor_publisher = rospy.Publisher('long_range_ir/{}'.format(sensor_index), Range, queue_size=10)
+        self._sensor_publisher = rospy.Publisher('long_range_ir/{}'.format(sensor_index),
+                                                 Range,
+                                                 queue_size=10)
 
-        self._sensor = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[sensor_index], i2c_address=TOF_I2C_ADDRESS)
+        self._sensor = VL53L1X.VL53L1X(i2c_bus=TOF_I2C_CHANNELS[sensor_index],
+                                       i2c_address=TOF_I2C_ADDRESS)
 
     def close_sensor(self):
         """Close the sensor after the ROS Node is shutdown."""
@@ -62,7 +79,8 @@ class PiPuckTOFSensorServer:
         timing_budget_us = int((1.0 / self._rate_raw * 1000000.0) / 4.0)
         inter_measurement_period_ms = int((1.0 / self._rate_raw * 1000.0) / 2.0)
 
-        self._sensor.set_timing(timing_budget=timing_budget_us, inter_measurement_period=inter_measurement_period_ms)
+        self._sensor.set_timing(timing_budget=timing_budget_us,
+                                inter_measurement_period=inter_measurement_period_ms)
 
         self._sensor.start_ranging(self._distance_mode)
 
