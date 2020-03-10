@@ -2,6 +2,8 @@
 
 <robot name="pi_puck">
 
+    <!-- Base e-puck -->
+
     <link name="base_link">
         <visual>
             <geometry>
@@ -67,6 +69,8 @@
         <origin xyz="0.0 0.0 0.037"/>
     </joint>
 
+    <!-- Interface Board -->
+
     <link name="interface_board">
         <visual>
             <geometry>
@@ -83,6 +87,8 @@
         <child link="interface_board"/>
         <origin xyz="0.0 0.0 0.010"/>
     </joint>
+
+    <!-- RPi Zero -->
 
     <link name="pi_zero">
         <visual>
@@ -101,6 +107,8 @@
         <origin xyz="0.0 0.0 0.0085"/>
     </joint>
 
+    <!-- Extension Board -->
+
     <link name="sensor_board">
         <visual>
             <geometry>
@@ -117,6 +125,8 @@
         <child link="sensor_board"/>
         <origin xyz="0.0 0.0 0.005"/>
     </joint>
+
+    <!-- ToF Sensors -->
 
     <link name="tof_sensor_0">
         <visual>
@@ -220,6 +230,8 @@
         <origin xyz="-0.023 0.023 0.006" rpy="0 0 2.44346"/>
     </joint>
 
+    <!-- IMU -->
+
     <link name="imu_sensor">
         <visual>
             <geometry>
@@ -235,6 +247,144 @@
         <parent link="sensor_board"/>
         <child link="imu_sensor"/>
         <origin xyz="0 0 0.001"/>
+    </joint>
+
+    <!-- IR Reflectance -->
+
+    <link name="reflectance_sensor_0">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_0" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_0"/>
+        <origin xyz="0.034 -0.010 -0.004" rpy="0 0 -0.261799"/>
+    </joint>
+
+    <link name="reflectance_sensor_7">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_7" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_7"/>
+        <origin xyz="0.034 0.010 -0.004" rpy="0 0 0.261799"/>
+    </joint>
+
+    <link name="reflectance_sensor_3">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_3" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_3"/>
+        <origin xyz="-0.034 -0.010 -0.004" rpy="0 0 -2.879793"/>
+    </joint>
+
+    <link name="reflectance_sensor_4">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_4" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_4"/>
+        <origin xyz="-0.034 0.010 -0.004" rpy="0 0 2.879793"/>
+    </joint>
+
+    <link name="reflectance_sensor_1">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_1" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_1"/>
+        <origin xyz="0.025 -0.025 -0.004" rpy="0 0 -0.785398"/>
+    </joint>
+
+    <link name="reflectance_sensor_6">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_6" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_6"/>
+        <origin xyz="0.025 0.025 -0.004" rpy="0 0 0.785398"/>
+    </joint>
+
+    <link name="reflectance_sensor_2">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_2" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_2"/>
+        <origin xyz="0 -0.037 -0.004" rpy="0 0 -1.5708"/>
+    </joint>
+
+    <link name="reflectance_sensor_5">
+        <visual>
+            <geometry>
+                <box size="0.004 0.007 0.004"/>
+            </geometry>
+            <material name="black_sensor">
+                <color rgba="0 0 0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="body_top_to_reflectance_sensor_5" type="fixed">
+        <parent link="body_top"/>
+        <child link="reflectance_sensor_5"/>
+        <origin xyz="0 0.037 -0.004" rpy="0 0 1.5708"/>
     </joint>
 
 </robot>
