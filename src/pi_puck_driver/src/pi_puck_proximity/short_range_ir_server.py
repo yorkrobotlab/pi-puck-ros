@@ -43,6 +43,8 @@ IR_SENSOR_ANGLES = (0, 45, 90, 135, 180, 225, 270, 315)
 
 IR_SENSOR_COUNT = 8
 
+FOV = 0.785398 # Estimated at 45 degrees
+
 REFERENCE_FRAME_ID = "reflectance_sensor_{}"
 
 BUS = SMBus(I2C_CHANNEL)
@@ -108,7 +110,8 @@ def pi_puck_short_range_ir_server():
             range_result = Range(radiation_type=Range.INFRARED,
                                  min_range=0,
                                  max_range=0.1,
-                                 range=converted_distance_reading)
+                                 range=converted_distance_reading,
+                                 field_of_view=FOV)
             range_result.header.frame_id = ir_proximity_frame_ids[ir_sensor]
             ir_proximity_publishers[ir_sensor].publish(range_result)
         rate.sleep()
