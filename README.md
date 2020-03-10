@@ -27,12 +27,15 @@ The following features are currently supported:
   - [x] Spatial
     - [x] IMU (Z-rotation mode and full 3-axis mode)
     - [ ] Accelerometer (Not exposed by Pi-puck e-puck firmware, changes to firmware needed if we want to expose this)
-    - [ ] Transform server
+    - [x] Transform server
       - [x] Static transforms
       - [ ] Dynamic transform
+        - [x] Rotation
+        - [ ] Translation
   - [x] Motors
     - [x] Speed
     - [x] Steps 
+    - [ ] Odometry
   - [x] Proximity
     - [x] e-puck IR (< 1 metre range)
     - [x] Pi-puck IR (between 1.35 and 4 metre range based on mode)
@@ -127,3 +130,12 @@ The indices of the long range IR sensors are show in the diagram below:
 
 TODO
 
+## Robot Model (URDF)
+
+A model of the Pi-puck can be found in `src/pi_puck_driver/src/urdf/pi_puck_urdf.xml`. 
+
+## RVIZ
+
+![Image depicting the RVIZ view of the robot with range data displayed.](img/rviz.png)
+
+RVIZ configuration displaying data from all sensors of the Pi-puck can be found in `src/pi_puck_driver/src/rviz/pi_puck.rviz`.
