@@ -103,6 +103,8 @@ class PiPuckMotorServer(object):
 
     def close_bus(self):
         """Close the I2C bus after the ROS Node is shutdown."""
+        self._bus.write_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_SPEED, 0)
+        self._bus.write_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_SPEED, 0)
         self._bus.close()
 
     @staticmethod
