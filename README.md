@@ -8,7 +8,7 @@ This repository contains the ROS driver package for support for the Pi-puck robo
 
 ### Pi-puck
 
-![Three different views of the Pi-puck platform.](img/pi-puck.jpg)
+![Three different views of the Pi-puck platform.](img/pi-puck.png)
 
 The Pi-puck is a [Raspberry Pi](https://www.raspberrypi.org) extension board for the [e-puck](http://www.gctronic.com/doc/index.php?title=E-Puck) and [e-puck2](http://www.gctronic.com/doc/index.php?title=e-puck2) robot platforms, designed and built as a collaboration between the [University of York](https://www.york.ac.uk/robot-lab/) and [GCtronic](http://www.gctronic.com).
 
