@@ -71,6 +71,8 @@ class PiPuckMotorServer(object):
 
         self._left_steps_previous = 0
         self._right_steps_previous = 0
+        self._real_left_steps_previous = 0
+        self._real_right_steps_previous = 0
 
         self._left_motor_speed = 0
         self._right_motor_speed = 0
@@ -151,8 +153,8 @@ class PiPuckMotorServer(object):
             self._steps_right_pub.publish(right_steps)
             self._steps_left_pub.publish(left_steps)
 
-            delta_left = (real_left_steps - self._left_steps_previous) / MOTOR_STEP_DISTANCE
-            delta_right = (real_right_steps - self._right_steps_previous) / MOTOR_STEP_DISTANCE
+            delta_left = (real_left_steps - self._real_left_steps_previous) / MOTOR_STEP_DISTANCE
+            delta_right = (real_right_steps - self._real_right_steps_previous) / MOTOR_STEP_DISTANCE
 
             delta_theta = (delta_right - delta_left) / WHEEL_DISTANCE
             delta_steps = (delta_right + delta_left) / 2.0
@@ -163,6 +165,8 @@ class PiPuckMotorServer(object):
 
             self._left_steps_previous = left_steps
             self._right_steps_previous = right_steps
+            self._real_left_steps_previous = real_left_steps
+            self._real_right_steps_previous = real_right_steps
 
             odometry_message = Odometry()
 
