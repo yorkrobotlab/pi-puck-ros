@@ -95,13 +95,15 @@ class PiPuckMotorServer(object):
 
     def callback_left(self, data):
         """Handle requests for speed change of left motor."""
-        self._left_motor_speed = PiPuckMotorServer.convert_speed(data.data)
-        self._bus.write_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_SPEED, self._left_motor_speed)
+        self._left_motor_speed = data.data
+        self._bus.write_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_SPEED,
+                                  PiPuckMotorServer.convert_speed(self._left_motor_speed))
 
     def callback_right(self, data):
         """Handle request for speed change of right motor."""
-        self._right_motor_speed = PiPuckMotorServer.convert_speed(data.data)
-        self._bus.write_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_SPEED, self._right_motor_speed)
+        self._right_motor_speed = data.data
+        self._bus.write_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_SPEED,
+                                  PiPuckMotorServer.convert_speed(self._right_motor_speed))
 
     def close_bus(self):
         """Close the I2C bus after the ROS Node is shutdown."""
@@ -137,14 +139,18 @@ class PiPuckMotorServer(object):
             right_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS))
             measurement_time = rospy.get_time()
 
-            if self._left_motor_speed > 0 and left_steps < self._left_steps_previous:
+            if self._left_motor_speed > 0 and left_steps + (MAX_MOTOR_STEPS_RAW /
+                                                            2.0) < self._left_steps_previous:
                 self._left_overflows += 1
-            elif self._left_motor_speed < 0 and left_steps > self._left_steps_previous:
+            elif self._left_motor_speed < 0 and left_steps > self._left_steps_previous + (
+                    MAX_MOTOR_STEPS_RAW / 2.0):
                 self._left_overflows -= 1
 
-            if self._right_motor_speed > 0 and right_steps < self._right_steps_previous:
+            if self._right_motor_speed > 0 and right_steps + (MAX_MOTOR_STEPS_RAW /
+                                                              2.0) < self._right_steps_previous:
                 self._right_overflows += 1
-            elif self._right_motor_speed < 0 and right_steps > self._right_steps_previous:
+            elif self._right_motor_speed < 0 and right_steps > self._right_steps_previous + (
+                    MAX_MOTOR_STEPS_RAW / 2.0):
                 self._right_overflows -= 1
 
             real_left_steps = left_steps + self._left_overflows * MAX_MOTOR_STEPS_RAW
