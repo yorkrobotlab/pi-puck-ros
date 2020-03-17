@@ -134,6 +134,14 @@ class PiPuckMotorServer(object):
 
     def run(self):
         """ROS Node server."""
+        initial_left_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS))
+        initial_right_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS))
+
+        self._left_steps_previous = initial_left_steps
+        self._right_steps_previous = initial_right_steps
+        self._real_left_steps_previous = initial_left_steps
+        self._real_right_steps_previous = initial_right_steps
+
         while not rospy.is_shutdown():
             left_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS))
             right_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS))
