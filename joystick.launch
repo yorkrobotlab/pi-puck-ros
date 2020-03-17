@@ -1,0 +1,6 @@
+<launch>
+  <node name="joy" pkg="joy" type="joy_node">
+    <param name="dev" value="/dev/input/js2" />
+  </node>
+  <node name="joystick_control" pkg="pi_puck_examples" type="joystick_control.py" />
+</launch>

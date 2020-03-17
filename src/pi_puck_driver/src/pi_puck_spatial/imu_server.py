@@ -73,7 +73,7 @@ class PiPuckImuServer:
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 30))
 
         self._raw_sample_rate = int(rospy.get_param('~sample_rate', 128))
         self._sample_rate = rospy.Rate(self._raw_sample_rate)
@@ -138,16 +138,13 @@ class PiPuckImuServer:
 
         return Quaternion(x=q_x, y=q_y, z=q_z, w=q_w)
 
-    def calculate_heading_quaternion(self, magnetometer_reading):
+    @staticmethod
+    def calculate_heading(magnetometer_reading):
         """Calculate the current orientation using magnetometer.
 
         Currently only supports yaw calculation e.g. rotation about the z axis.
         """
-        raw_x, raw_y, raw_z = magnetometer_reading
-        cal_x, cal_y, cal_z = self._calibration["magnetometer"]["x"], self._calibration[
-            "magnetometer"]["y"], self._calibration["magnetometer"]["z"]
-
-        x, y, z = raw_x - cal_x, raw_y - cal_y, raw_z - cal_z
+        x, y, z = magnetometer_reading
 
         if y == 0:
             if x > 0:
@@ -159,7 +156,16 @@ class PiPuckImuServer:
         else:  # y > 0
             x_y_direction = math.radians(270) - math.atan(x / y)
 
-        return PiPuckImuServer.euler_to_quaternion(yaw=x_y_direction, pitch=0, roll=0)
+        return x_y_direction
+
+    @staticmethod
+    def calculate_heading_quaternion(magnetometer_reading):
+        """Calculate the current orientation as a quaternion using magnetometer.
+
+        Currently only supports yaw calculation e.g. rotation about the z axis.
+        """
+        return PiPuckImuServer.euler_to_quaternion(
+            yaw=PiPuckImuServer.calculate_heading(magnetometer_reading), pitch=0, roll=0)
 
     def _sample_thread(self):
         """Run sampling thread, to be run in a separate thread to handle sampling of sensors."""
@@ -208,8 +214,8 @@ class PiPuckImuServer:
                                                           y=filter_y,
                                                           z=filter_z)
             else:
-                self._orientation_quaternion = self.calculate_heading_quaternion(
-                    magnetometer_reading)
+                self._orientation_quaternion = PiPuckImuServer.calculate_heading_quaternion(
+                    magnetometer_result)
 
             self._gyro_result = (gyro_x, gyro_y, gyro_z)
 

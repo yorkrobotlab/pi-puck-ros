@@ -1,0 +1,10 @@
+<launch>
+  <group ns="$(optenv ROBOT_NAME pi_puck)">
+    <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>
+    <param name="tf_prefix" value="$(optenv ROBOT_NAME pi_puck)"/>
+    <node name="tf_broadcaster" pkg="pi_puck_driver" type="transform_server.py" output="screen">
+      <param name="use_imu" value="true"/>
+      <param name="use_hybrid_position" value="true"/>
+    </node>
+  </group>
+</launch>
