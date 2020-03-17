@@ -8,7 +8,7 @@ from math import cos, pi, sin
 import rospy
 from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Float32, Int64
+from std_msgs.msg import Float32, Int64, UInt16
 
 # Standard imports
 from smbus import SMBus
@@ -43,8 +43,12 @@ class PiPuckMotorServer(object):
 
         rospy.on_shutdown(self.close_bus)
 
-        self._steps_right_pub = rospy.Publisher('motors/steps_right', Int64, queue_size=10)
-        self._steps_left_pub = rospy.Publisher('motors/steps_left', Int64, queue_size=10)
+        self._steps_right_pub = rospy.Publisher('motors/steps_right', UInt16, queue_size=10)
+        self._steps_left_pub = rospy.Publisher('motors/steps_left', UInt16, queue_size=10)
+        self._real_steps_right_pub = rospy.Publisher('motors/real_steps_right',
+                                                     Int64,
+                                                     queue_size=10)
+        self._real_steps_left_pub = rospy.Publisher('motors/real_steps_left', Int64, queue_size=10)
         self._odometry_pub = rospy.Publisher('motors/odometry', Odometry, queue_size=10)
 
         rospy.init_node("motors")
@@ -166,6 +170,8 @@ class PiPuckMotorServer(object):
 
             self._steps_right_pub.publish(right_steps)
             self._steps_left_pub.publish(left_steps)
+            self._real_steps_right_pub.publish(real_right_steps)
+            self._real_steps_left_pub.publish(real_left_steps)
 
             delta_left = (real_left_steps - self._real_left_steps_previous) * MOTOR_STEP_DISTANCE
             delta_right = (real_right_steps - self._real_right_steps_previous) * MOTOR_STEP_DISTANCE
