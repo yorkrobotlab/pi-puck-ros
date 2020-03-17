@@ -131,7 +131,7 @@ class PiPuckTransformServer(object):
         """Magnetometer data callback."""
         raw_heading = calculate_heading(
             (data.magnetic_field.x, data.magnetic_field.y, data.magnetic_field.z))
-        self._magnetic_orientation = (raw_heading + (pi + pi / 2)) % (2 * pi)
+        self._magnetic_orientation = (2 * pi) - ((raw_heading + pi) % (2 * pi))
 
     def motor_steps_left_data_callback(self, data):
         """Motor data callback handler."""

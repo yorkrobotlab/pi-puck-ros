@@ -73,7 +73,7 @@ class PiPuckImuServer:
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 30))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
 
         self._raw_sample_rate = int(rospy.get_param('~sample_rate', 128))
         self._sample_rate = rospy.Rate(self._raw_sample_rate)
