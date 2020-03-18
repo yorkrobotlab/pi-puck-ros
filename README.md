@@ -29,13 +29,13 @@ The following features are currently supported:
     - [ ] Accelerometer (Not exposed by Pi-puck e-puck firmware, changes to firmware needed if we want to expose this)
     - [x] Transform server
       - [x] Static transforms
-      - [ ] Dynamic transform
+      - [x] Dynamic transform
         - [x] Rotation
-        - [ ] Translation
+        - [x] Translation
   - [x] Motors
     - [x] Speed
     - [x] Steps 
-    - [ ] Odometry
+    - [x] Odometry
   - [x] Proximity
     - [x] e-puck IR (< 1 metre range)
     - [x] Pi-puck IR (between 1.35 and 4 metre range based on mode)
@@ -45,8 +45,8 @@ The following features are currently supported:
 - [ ] Sound
   - [ ] Speaker
   - [ ] Microphones
-- [ ] Power
-  - [ ] Battery ADC
+- [x] Power
+  - [x] Battery ADC
 - [ ] Display
   - [ ] OLED
 - [ ] I/O
