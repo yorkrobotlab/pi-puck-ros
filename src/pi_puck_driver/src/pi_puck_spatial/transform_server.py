@@ -10,11 +10,11 @@ import tf
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu, MagneticField
 from std_msgs.msg import Int64
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Vector3
 
-from imu_server import PiPuckImuServer
+from imu_server import PiPuckImuServer  # pylint: disable=relative-import
 
-calculate_heading = PiPuckImuServer.calculate_heading
+calculate_heading = PiPuckImuServer.calculate_heading  # pylint: disable=invalid-name
 
 StaticTransform = namedtuple("StaticTransform", ["parent_link", "child_link", "xyz", "rpy"])
 
@@ -24,16 +24,17 @@ WHEEL_DISTANCE = 0.053  # the distance between the wheels in metres
 MOTOR_STEP_DISTANCE = WHEEL_CIRCUMFERENCE / 1000.0  # 1 turn should be 1000 steps
 
 
-class PiPuckTransformServer(object):
+class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attributes
     """ROS Node to publish data from the Pi-puck's IMU."""
 
     def __init__(self):
         """Initialise TF server node."""
         rospy.init_node("tf_broadcaster")
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 60))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 30))
         self._use_imu = bool(rospy.get_param('~use_imu', True))
         self._use_hybrid_position = bool(rospy.get_param('~use_hybrid_position', True))
+        self._publish_hybrid_position = bool(rospy.get_param('~publish_hybrid_position', True))
 
         self._robot_description_raw = rospy.get_param("robot_description", None)
         self._tf_prefix = rospy.get_param("tf_prefix", None)
@@ -41,7 +42,10 @@ class PiPuckTransformServer(object):
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
 
-        self._publish_static_transforms = rospy.get_param("publish_static_transforms", True)
+        if self._publish_hybrid_position:
+            self._odometry_pub = rospy.Publisher("tf_broadcaster/odometry", Odometry, queue_size=10)
+
+        self._publish_static_transforms = rospy.get_param("~publish_static_transforms", True)
         if not isinstance(self._publish_static_transforms, bool):
             self._publish_static_transforms = bool(self._publish_static_transforms)
 
@@ -59,7 +63,8 @@ class PiPuckTransformServer(object):
 
         self._current_xyz = (0, 0, 0)
         self._current_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0)
-        self._previous_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0)
+        self._current_angular = Vector3(0, 0, 0)
+        self._current_linear = Vector3(0, 0, 0)
         self._steps_right = None
         self._steps_left = None
         self._previous_steps_right = None
@@ -113,9 +118,10 @@ class PiPuckTransformServer(object):
 
     def imu_data_callback(self, data):
         """IMU data callback handler."""
-        self._previous_quaternion = self._current_quaternion
         self._current_quaternion = (data.orientation.x, data.orientation.y, data.orientation.z,
                                     data.orientation.w)
+        self._current_angular = data.angular_velocity
+        self._current_linear = data.linear_acceleration
 
     def motor_odometry_data_callback(self, data):
         """Motor data callback handler."""
@@ -123,7 +129,6 @@ class PiPuckTransformServer(object):
             self._current_xyz = (data.pose.pose.position.x, data.pose.pose.position.y,
                                  data.pose.pose.position.z)
         if not self._use_imu:
-            self._previous_quaternion = self._current_quaternion
             self._current_quaternion = (data.pose.pose.orientation.x, data.pose.pose.orientation.y,
                                         data.pose.pose.orientation.z, data.pose.pose.orientation.w)
 
@@ -174,6 +179,23 @@ class PiPuckTransformServer(object):
         self._previous_steps_right = steps_right
         self._previous_theta = current_theta
 
+    def publish_hybrid_position(self):
+        """Publish the estimated hybrid position as odometry."""
+        odometry_message = Odometry()
+        odometry_message.header.frame_id = self._tf_prefix + "base_link"
+
+        (odometry_message.pose.pose.position.x, odometry_message.pose.pose.position.y,
+         odometry_message.pose.pose.position.z) = self._current_xyz
+
+        (odometry_message.pose.pose.orientation.w, odometry_message.pose.pose.orientation.x,
+         odometry_message.pose.pose.orientation.y,
+         odometry_message.pose.pose.orientation.z) = self._current_quaternion
+
+        odometry_message.twist.twist.angular = self._current_angular
+        odometry_message.twist.twist.angular = self._current_linear
+
+        self._odometry_pub.publish(odometry_message)
+
     def run(self):
         """Run the transform server."""
         if self._use_imu:
@@ -194,10 +216,11 @@ class PiPuckTransformServer(object):
                 self.send_static_transforms()
             if self._use_hybrid_position:
                 self.calculate_hybrid_position()
+            if self._publish_hybrid_position:
+                self.publish_hybrid_position()
             self.send_pi_puck_transform()
             self._rate.sleep()
 
 
 if __name__ == '__main__':
-    tf_server = PiPuckTransformServer()
-    tf_server.run()
+    PiPuckTransformServer().run()

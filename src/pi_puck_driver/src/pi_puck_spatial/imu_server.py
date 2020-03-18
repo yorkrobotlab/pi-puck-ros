@@ -12,12 +12,9 @@ import rospy
 from geometry_msgs.msg import Vector3, Quaternion
 from sensor_msgs.msg import Imu, Temperature, MagneticField
 
-# Standard imports
-from lsm9ds1 import LSM9DS1
-
-import numpy
-
-from madgwick_py.madgwickahrs import MadgwickAHRS
+# Local imports
+from lsm9ds1 import LSM9DS1  # pylint: disable=relative-import
+from madgwick_py.madgwickahrs import MadgwickAHRS  # pylint: disable=relative-import
 
 UNKNOWN_VARIANCE = 0
 
@@ -27,7 +24,8 @@ ANGULAR_VELOCITY_COVARIANCE = [0.00875, 0, 0, 0, 0.00875, 0, 0, 0, 0.00875]
 # This is an estimate of the average covariance, assuming a normal distribution.
 ORIENTATION_COVARIANCE = [0.139, 0, 0, 0, 0.139, 0, 0, 0, 0.139]
 
-# Rough estimate based on measurements with Pi-pucks
+# Rough estimate based on measurements with Pi-pucks, calibration script should be run to get
+# accurate results.
 CALIBRATION_DATA_DEFAULT = {
     "magnetometer": {
         "y": -2.981,
@@ -47,10 +45,14 @@ CALIBRATION_DATA_DEFAULT = {
 }
 
 REFERENCE_FRAME_ID = "imu_sensor"
+
+# Increasing beta will increase confidence in IMU values, this will produce faster results but
+# they may be less accurate. Reducing it will reduce confidence and will slow response time, but
+# increase accuracy.
 AHRS_BETA = 4
 
 
-class PiPuckImuServer:
+class PiPuckImuServer(object):  # pylint: disable=too-many-instance-attributes
     """ROS Node to publish data from the Pi-puck's IMU."""
 
     def __init__(self):
@@ -59,10 +61,14 @@ class PiPuckImuServer:
 
         rospy.init_node("imu")
 
+        # Switch to determine if full orientation is calculated or just rotation around z axis.
         self._calculate_full_orientation = bool(rospy.get_param("~calculate_full_orientation",
                                                                 True))
+
+        # Unimplemented switch to control removal of gravity.
         self._remove_gravity = bool(rospy.get_param("~remove_gravity", False))
 
+        # Handle transformation tree prefix.
         tf_prefix_key = rospy.search_param("tf_prefix")
         if tf_prefix_key:
             self._tf_prefix = rospy.get_param(tf_prefix_key, None)
@@ -73,8 +79,10 @@ class PiPuckImuServer:
         if self._tf_prefix is not None and not self._tf_prefix.endswith("/"):
             self._tf_prefix += "/"
 
+        # Rate of sensor data transmission
         self._rate = rospy.Rate(rospy.get_param('~rate', 10))
 
+        # Rate of collection of sample data
         self._raw_sample_rate = int(rospy.get_param('~sample_rate', 128))
         self._sample_rate = rospy.Rate(self._raw_sample_rate)
 
@@ -88,6 +96,7 @@ class PiPuckImuServer:
 
         self._sensor = None
 
+        # Handle IMU calibration
         calibration_file = None
 
         if path.isfile("calibration.json"):
@@ -101,6 +110,7 @@ class PiPuckImuServer:
         else:
             self._calibration = CALIBRATION_DATA_DEFAULT
 
+        # Setup data storage variables.
         if self._calculate_full_orientation:
             self._orientation_filter = MadgwickAHRS(sampleperiod=1.0 / float(self._raw_sample_rate),
                                                     beta=AHRS_BETA)
@@ -123,18 +133,21 @@ class PiPuckImuServer:
 
         Based on code from
         https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles.
-        """
-        cy = math.cos(yaw * 0.5)
-        sy = math.sin(yaw * 0.5)
-        cp = math.cos(pitch * 0.5)
-        sp = math.sin(pitch * 0.5)
-        cr = math.cos(roll * 0.5)
-        sr = math.sin(roll * 0.5)
 
-        q_w = cy * cp * cr + sy * sp * sr
-        q_x = cy * cp * sr - sy * sp * cr
-        q_y = sy * cp * sr + cy * sp * cr
-        q_z = sy * cp * cr - cy * sp * sr
+        We don't use tf.transforms here to reduce dependence on tf and increase performance on this
+        simple task.
+        """
+        c_y = math.cos(yaw * 0.5)
+        s_y = math.sin(yaw * 0.5)
+        c_p = math.cos(pitch * 0.5)
+        s_p = math.sin(pitch * 0.5)
+        c_r = math.cos(roll * 0.5)
+        s_r = math.sin(roll * 0.5)
+
+        q_w = c_y * c_p * c_r + s_y * s_p * s_r
+        q_x = c_y * c_p * s_r - s_y * s_p * c_r
+        q_y = s_y * c_p * s_r + c_y * s_p * c_r
+        q_z = s_y * c_p * c_r - c_y * s_p * s_r
 
         return Quaternion(x=q_x, y=q_y, z=q_z, w=q_w)
 
@@ -144,17 +157,17 @@ class PiPuckImuServer:
 
         Currently only supports yaw calculation e.g. rotation about the z axis.
         """
-        x, y, z = magnetometer_reading
+        mag_x, mag_y, _ = magnetometer_reading
 
-        if y == 0:
-            if x > 0:
+        if mag_y == 0:
+            if mag_x > 0:
                 x_y_direction = math.radians(180)
             else:  # x <= 0
                 x_y_direction = math.radians(0)
-        elif y < 0:
-            x_y_direction = math.radians(90) - math.atan(x / y)
+        elif mag_y < 0:
+            x_y_direction = math.radians(90) - math.atan(mag_x / mag_y)
         else:  # y > 0
-            x_y_direction = math.radians(270) - math.atan(x / y)
+            x_y_direction = math.radians(270) - math.atan(mag_x / mag_y)
 
         return x_y_direction
 
@@ -180,7 +193,7 @@ class PiPuckImuServer:
 
             # Gyro is in degrees/second so conversion to rads/sec is needed,
             # as well as unpacking
-            gyro_result = map(lambda deg: deg * (math.pi / 180.0), self._sensor.gyro)
+            gyro_result = [deg * (math.pi / 180.0) for deg in self._sensor.gyro]
             gyro_x, gyro_y, gyro_z = gyro_result
             gyro_x, gyro_y, gyro_z = gyro_x - self._calibration["gyro"][
                 "x"], gyro_y - self._calibration["gyro"]["y"], gyro_z - self._calibration["gyro"][
@@ -232,6 +245,9 @@ class PiPuckImuServer:
         """Run the sensor server."""
         self.open_sensor()
 
+        # We need a separate sensor reading thread as the sample rate must be relatively high
+        # (> 64 hrz), ideally close to 256 hrz. If we sent IMU data at this rate the overheads of
+        # sending would slow the sensor reading rate, hence we use a separate thread.
         sensor_sample_thread = Thread(target=self._sample_thread)
         sensor_sample_thread.start()
 
@@ -276,5 +292,4 @@ class PiPuckImuServer:
 
 
 if __name__ == "__main__":
-    server = PiPuckImuServer()
-    server.run()
+    PiPuckImuServer().run()
