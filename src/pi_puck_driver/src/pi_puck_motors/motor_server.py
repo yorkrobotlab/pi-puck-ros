@@ -56,7 +56,7 @@ class PiPuckMotorServer(object):
         rospy.Subscriber("motors/speed_right", Float32, self.callback_right)
         rospy.Subscriber("motors/speed_left", Float32, self.callback_left)
 
-        self._rate = rospy.Rate(rospy.get_param('rate', 10))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
 
         tf_prefix_key = rospy.search_param("tf_prefix")
         if tf_prefix_key:
@@ -121,18 +121,21 @@ class PiPuckMotorServer(object):
 
         Based on code from
         https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles.
-        """
-        cy = cos(yaw * 0.5)
-        sy = sin(yaw * 0.5)
-        cp = cos(pitch * 0.5)
-        sp = sin(pitch * 0.5)
-        cr = cos(roll * 0.5)
-        sr = sin(roll * 0.5)
 
-        q_w = cy * cp * cr + sy * sp * sr
-        q_x = cy * cp * sr - sy * sp * cr
-        q_y = sy * cp * sr + cy * sp * cr
-        q_z = sy * cp * cr - cy * sp * sr
+        We don't use tf.transforms here to reduce dependence on tf and increase performance on this
+        simple task.
+        """
+        c_y = cos(yaw * 0.5)
+        s_y = sin(yaw * 0.5)
+        c_p = cos(pitch * 0.5)
+        s_p = sin(pitch * 0.5)
+        c_r = cos(roll * 0.5)
+        s_r = sin(roll * 0.5)
+
+        q_w = c_y * c_p * c_r + s_y * s_p * s_r
+        q_x = c_y * c_p * s_r - s_y * s_p * c_r
+        q_y = s_y * c_p * s_r + c_y * s_p * c_r
+        q_z = s_y * c_p * c_r - c_y * s_p * s_r
 
         return Quaternion(x=q_x, y=q_y, z=q_z, w=q_w)
 
@@ -141,16 +144,22 @@ class PiPuckMotorServer(object):
         initial_left_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS))
         initial_right_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS))
 
+        # Initial steps are set to counter the fact that the node may have previously run and the
+        # e-puck firmware will not necessarily have been reset.
         self._left_steps_previous = initial_left_steps
         self._right_steps_previous = initial_right_steps
         self._real_left_steps_previous = initial_left_steps
         self._real_right_steps_previous = initial_right_steps
 
         while not rospy.is_shutdown():
+            # Get current steps
             left_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS))
             right_steps = int(self._bus.read_word_data(EPUCK_I2C_ADDR, RIGHT_MOTOR_STEPS))
+
+            # Get step measurement time
             measurement_time = rospy.get_time()
 
+            # Check for overflows and underflows
             if self._left_motor_speed > 0 and left_steps + (MAX_MOTOR_STEPS_RAW /
                                                             2.0) < self._left_steps_previous:
                 self._left_overflows += 1
@@ -165,29 +174,36 @@ class PiPuckMotorServer(object):
                     MAX_MOTOR_STEPS_RAW / 2.0):
                 self._right_overflows -= 1
 
+            # Calculate the real steps left and right accounting for overflows
             real_left_steps = left_steps + self._left_overflows * MAX_MOTOR_STEPS_RAW
             real_right_steps = right_steps + self._right_overflows * MAX_MOTOR_STEPS_RAW
 
+            # Publish raw and real steps
             self._steps_right_pub.publish(right_steps)
             self._steps_left_pub.publish(left_steps)
             self._real_steps_right_pub.publish(real_right_steps)
             self._real_steps_left_pub.publish(real_left_steps)
 
+            # Calculate step changes
             delta_left = (real_left_steps - self._real_left_steps_previous) * MOTOR_STEP_DISTANCE
             delta_right = (real_right_steps - self._real_right_steps_previous) * MOTOR_STEP_DISTANCE
 
+            #Calculate delta steps and turn
             delta_theta = (delta_right - delta_left) / WHEEL_DISTANCE
             delta_steps = (delta_right + delta_left) / 2.0
 
+            # Update the estimate for x, y, and rotation
             self._estimate_x += delta_steps * cos(self._estimate_theta + delta_theta / 2.0)
             self._estimate_y += delta_steps * sin(self._estimate_theta + delta_theta / 2.0)
             self._estimate_theta += delta_theta
 
+            # Update previous steps to current
             self._left_steps_previous = left_steps
             self._right_steps_previous = right_steps
             self._real_left_steps_previous = real_left_steps
             self._real_right_steps_previous = real_right_steps
 
+            # Send odometry
             odometry_message = Odometry()
 
             odometry_message.pose.pose.orientation = PiPuckMotorServer.euler_to_quaternion(
