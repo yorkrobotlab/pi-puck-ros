@@ -40,6 +40,8 @@ class PiPuckBatteryServer(object):
 
     def __init__(self):
         """Initialise node."""
+        rospy.init_node("power")
+
         self._rate = rospy.Rate(rospy.get_param("~rate", 1))
         self._publish_aux_battery = bool(rospy.get_param("~publish_aux_battery", False))
 
@@ -52,8 +54,6 @@ class PiPuckBatteryServer(object):
         self._battery_history = {}
         for battery in BATTERIES:
             self._battery_history[battery] = []
-
-        rospy.init_node("power")
 
     @staticmethod
     def convert_adc_to_voltage(adc_value):
@@ -87,7 +87,10 @@ class PiPuckBatteryServer(object):
         battery_state.design_capacity = battery_config["design_capacity"]
         battery_state.power_supply_technology = battery_config["power_supply_technology"]
 
-        if battery_voltage >= battery_config["max_voltage"]:
+        average_battery_voltage = sum(self._battery_history[battery]) / len(
+            self._battery_history[battery])
+
+        if average_battery_voltage >= battery_config["max_voltage"]:
             battery_state.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_FULL
         elif battery_delta < 0:
             battery_state.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_DISCHARGING
@@ -96,9 +99,9 @@ class PiPuckBatteryServer(object):
         else:
             battery_state.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_NOT_CHARGING
 
-        if battery_voltage >= battery_config["max_voltage"] * OVER_VOLTAGE_MARGIN:
+        if average_battery_voltage >= battery_config["max_voltage"] * OVER_VOLTAGE_MARGIN:
             battery_state.power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_OVERVOLTAGE
-        elif battery_voltage <= battery_config["min_voltage"]:
+        elif average_battery_voltage <= battery_config["min_voltage"]:
             # It is unclear whether this means "out of charge" or "will never charge again", we
             # assume here that it means "out of charge".
             battery_state.power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_DEAD
@@ -106,7 +109,7 @@ class PiPuckBatteryServer(object):
             battery_state.power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_GOOD
 
         battery_state.percentage = clamp(
-            (battery_voltage - battery_config["min_voltage"]) /
+            (average_battery_voltage - battery_config["min_voltage"]) /
             (battery_config["max_voltage"] - battery_config["min_voltage"]), 1.0, 0.0)
 
         battery_state.current = NAN
