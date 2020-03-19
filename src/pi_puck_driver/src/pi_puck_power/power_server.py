@@ -26,8 +26,9 @@ BATTERIES = {
     }
 }
 HISTORY_MAX = 30  # 30 seconds at default rate
-OVER_VOLTAGE_MARGIN = 1.03  # 3%
-UNDER_VOLTAGE_MARGIN = 1.03  # 3%
+OVER_VOLTAGE_MARGIN = 1.035  # 3.5%
+CHARGED_VOLTAGE_MARGIN = 1.025 # 2.5%
+UNDER_VOLTAGE_MARGIN = 1.025  # 2.5%
 
 
 def clamp(value, value_max=1, value_min=0):
@@ -97,7 +98,7 @@ class PiPuckBatteryServer(object):
         average_battery_voltage = sum(self._battery_history[battery]) / len(
             self._battery_history[battery])
 
-        if average_battery_voltage >= battery_config["max_voltage"]:
+        if average_battery_voltage >= battery_config["max_voltage"] * CHARGED_VOLTAGE_MARGIN:
             battery_state.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_FULL
         elif battery_delta < 0:
             battery_state.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_DISCHARGING
