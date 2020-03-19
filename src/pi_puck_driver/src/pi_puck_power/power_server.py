@@ -80,7 +80,14 @@ class PiPuckBatteryServer(object):
         self._battery_history[battery].insert(0, battery_voltage)
         self._battery_history[battery] = self._battery_history[battery][:HISTORY_MAX]
 
-        battery_delta = self._battery_history[battery][0] - self._battery_history[battery][-1]
+        split_point = len(self._battery_history[battery]) // 2
+        head_half = self._battery_history[battery][:split_point]
+        tail_half = self._battery_history[battery][split_point:]
+
+        try:
+            battery_delta = (sum(head_half) / len(head_half)) - (sum(tail_half) / len(tail_half))
+        except ZeroDivisionError:
+            battery_delta = 0.0
 
         battery_state.voltage = battery_voltage
         battery_state.present = True
