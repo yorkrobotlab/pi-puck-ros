@@ -31,5 +31,6 @@
         <node name="imu" pkg="pi_puck_driver" type="imu_server.py" />
       </group>
     </group>
+    <node name="power" pkg="pi_puck_driver" type="power_server.py" />
   </group>
 </launch>
