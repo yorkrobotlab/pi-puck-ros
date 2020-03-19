@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""ROS Node to expose topics for motor speed and for motor steps of the Pi-puck."""
+"""ROS Node to expose topics for batteries on the Pi-puck."""
 
 # ROS imports
 import rospy
