@@ -39,6 +39,8 @@ def get_ros_master_ip():
                     return ip_prefix + "." + ip_suffix
             except urllib2.URLError:
                 pass
+            except socket.timeout:
+                pass
         timeout *= 2
 
     return "127.0.0.1"
