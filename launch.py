@@ -76,7 +76,7 @@ def main():
     os.environ["ROS_IP"] = ros_ip
     os.environ["ROS_MASTER_URI"] = "http://{}:11311".format(ros_master)
 
-    os.execl("roslaunch", os.path.abspath(parsed_args.launch_file))
+    os.execlp("roslaunch", os.path.abspath(parsed_args.launch_file))
 
 
 if __name__ == "__main__":
