@@ -5,7 +5,6 @@ import argparse
 import os
 import socket
 import urllib2
-import subprocess
 
 
 def get_local_ip():
@@ -29,14 +28,18 @@ def get_ros_master_ip():
 
     ip_format = "http://{}.{{}}:11311".format(ip_prefix)
 
-    for ip_suffix in map(str, range(256)):
-        try:
-            urllib2.urlopen(ip_format.format(ip_suffix), timeout=0.0005)
-        except urllib2.HTTPError as error:
-            if error.code == 501:
-                return ip_prefix + "." + ip_suffix
-        except urllib2.URLError:
-            pass
+    timeout = 0.0005
+
+    while timeout < 0.01:
+        for ip_suffix in map(str, range(256)):
+            try:
+                urllib2.urlopen(ip_format.format(ip_suffix), timeout=timeout)
+            except urllib2.HTTPError as error:
+                if error.code == 501:
+                    return ip_prefix + "." + ip_suffix
+            except urllib2.URLError:
+                pass
+        timeout *= 2
 
     return "127.0.0.1"
 
@@ -51,7 +54,8 @@ def main():
 
     parsed_args = arg_parser.parse_args()
 
-    if os.path.abspath(os.path.join(os.path.dirname(__file__), "devel")) not in os.environ["PKG_CONFIG_PATH"]:
+    if os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                    "devel")) not in os.environ["PKG_CONFIG_PATH"]:
         print("Please run `source devel/setup.bash first.`")
         return
 
@@ -70,7 +74,7 @@ def main():
     os.environ["ROS_IP"] = ros_ip
     os.environ["ROS_MASTER_URI"] = "http://{}:11311".format(ros_master)
 
-    subprocess.call(["roslaunch", os.path.abspath(parsed_args.launch_file)])
+    os.execl("roslaunch", os.path.abspath(parsed_args.launch_file))
 
 
 if __name__ == "__main__":
