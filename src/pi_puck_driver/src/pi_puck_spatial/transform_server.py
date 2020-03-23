@@ -31,7 +31,7 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
         """Initialise TF server node."""
         rospy.init_node("tf_broadcaster")
 
-        self._rate = rospy.Rate(rospy.get_param('~rate', 30))
+        self._rate = rospy.Rate(rospy.get_param('~rate', 10))
         self._use_imu = bool(rospy.get_param('~use_imu', True))
         self._use_hybrid_position = bool(rospy.get_param('~use_hybrid_position', True))
         self._publish_hybrid_position = bool(rospy.get_param('~publish_hybrid_position', True))
@@ -153,13 +153,10 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
         previous_steps_left = self._previous_steps_left
         previous_steps_right = self._previous_steps_right
         previous_theta = self._previous_theta
-        current_theta = None
+        current_theta = self._magnetic_orientation
 
-        if self._magnetic_orientation is not None:
-            current_theta = self._magnetic_orientation
-
-        has_magnetic_data = self._magnetic_orientation is not None
-        has_theta = self._previous_theta is not None
+        has_magnetic_data = current_theta is not None
+        has_theta = previous_theta is not None
         has_steps = previous_steps_left is not None and previous_steps_right is not None
 
         if has_steps and has_theta and has_magnetic_data:
@@ -172,8 +169,9 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
             delta_estimate_x = delta_steps * cos(previous_theta + delta_theta / 2.0)
             delta_estimate_y = delta_steps * sin(previous_theta + delta_theta / 2.0)
 
-            self._current_xyz = (self._current_xyz[0] + delta_estimate_x,
-                                 self._current_xyz[1] + delta_estimate_y, self._current_xyz[2])
+            c_x, c_y, c_z = self._current_xyz
+
+            self._current_xyz = (c_x + delta_estimate_x, c_y + delta_estimate_y, c_z)
 
         self._previous_steps_left = steps_left
         self._previous_steps_right = steps_right

@@ -30,7 +30,7 @@ def get_ros_master_ip():
 
     timeout = 0.0005
 
-    while timeout < 0.01:
+    while timeout < 0.1:
         for ip_suffix in map(str, range(256)):
             try:
                 urllib2.urlopen(ip_format.format(ip_suffix), timeout=timeout)
@@ -76,7 +76,9 @@ def main():
     os.environ["ROS_IP"] = ros_ip
     os.environ["ROS_MASTER_URI"] = "http://{}:11311".format(ros_master)
 
-    os.execlp("roslaunch", os.path.abspath(parsed_args.launch_file))
+    # roslaunch assumes that the first argument is the command that launched it and ignores it,
+    # therefore we need to pass "roslaunch" again.
+    os.execlp("roslaunch", "roslaunch", os.path.abspath(parsed_args.launch_file))
 
 
 if __name__ == "__main__":
