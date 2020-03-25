@@ -94,7 +94,7 @@ def calibrate(samples, interval, run_motors=True, just_magnetometer=False):
         set_left_speed(bus, 0)
         set_right_speed(bus, 0)
 
-    bus.close()
+        bus.close()
 
     magnetometer_x_sum = sum(map(lambda a: a[0], magnetometer_sample_values))
     magnetometer_y_sum = sum(map(lambda a: a[1], magnetometer_sample_values))
