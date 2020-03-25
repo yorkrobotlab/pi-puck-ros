@@ -48,7 +48,7 @@ def get_left_steps(bus, offset=0):
     return int(bus.read_word_data(EPUCK_I2C_ADDR, LEFT_MOTOR_STEPS)) + offset
 
 
-def calibrate(samples, interval, run_motors=True):
+def calibrate(samples, interval, run_motors=True, just_magnetometer=False):
     """Run calibration."""
     magnetometer_sample_values = []
 
@@ -104,6 +104,15 @@ def calibrate(samples, interval, run_motors=True):
 
     del magnetometer_sample_values
 
+    if just_magnetometer:
+        return {
+            "magnetometer": {
+                "x": magnetometer_x_sum / magnetometer_count,
+                "y": magnetometer_y_sum / magnetometer_count,
+                "z": magnetometer_z_sum / magnetometer_count
+            },
+        }
+
     accelerometer_sample_values = []
     gyro_sample_values = []
 
@@ -146,9 +155,18 @@ def main():
     """Application entry point."""
     argument_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 
-    argument_parser.add_argument("--samples", default=8000, type=int, help="Number of samples to take.")
-    argument_parser.add_argument("--interval", default=0.05, type=float, help="Interval in seconds between samples.")
-    argument_parser.add_argument("--output", default="./", help="Output location/file name.")
+    argument_parser.add_argument("-s", "--samples", default=8000, type=int, help="Number of samples to take.")
+    argument_parser.add_argument("-i",
+                                 "--interval",
+                                 default=0.05,
+                                 type=float,
+                                 help="Interval in seconds between samples.")
+    argument_parser.add_argument("-o", "--output", default="./", help="Output location/file name.")
+    argument_parser.add_argument("-n", "--no-motors", action="store_true", help="Don't run motors.")
+    argument_parser.add_argument("-m",
+                                 "--only-magnetometer",
+                                 action="store_true",
+                                 help="Calibrate only the magnetometer.")
 
     parsed_args = argument_parser.parse_args()
 
@@ -179,7 +197,10 @@ def main():
 
     print("Calibrating...")
 
-    calibration_result = calibrate(samples, interval, run_motors=True)
+    calibration_result = calibrate(samples,
+                                   interval,
+                                   run_motors=not parsed_args.no_motors,
+                                   just_magnetometer=parsed_args.only_magnetometer)
     with open(output_path, "wb") as output_file_handle:
         dump(calibration_result, output_file_handle)
 
