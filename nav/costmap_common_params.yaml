@@ -1,0 +1,57 @@
+obstacle_range: 0.5
+raytrace_range: 1.0
+#footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
+robot_radius: 0.035
+inflation_radius: 0.05
+
+observation_sources: long_range_ir_sensor_0 long_range_ir_sensor_1 long_range_ir_sensor_2 long_range_ir_sensor_3 long_range_ir_sensor_4 long_range_ir_sensor_5
+
+tof_sensor_0:
+    {
+        sensor_frame: pi_puck/tof_sensor_0,
+        data_type: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/0,
+        topic: topic_name,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_1:
+    {
+        sensor_frame: pi_puck/tof_sensor_1,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/1,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_2:
+    {
+        sensor_frame: pi_puck/tof_sensor_2,
+        data_type: LaserScan,
+        topic: topic_name,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_3:
+    {
+        sensor_frame: pi_puck/tof_sensor_3,
+        data_type: LaserScan,
+        topic: topic_name,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_4:
+    {
+        sensor_frame: pi_puck/tof_sensor_4,
+        data_type: LaserScan,
+        topic: topic_name,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_5:
+    {
+        sensor_frame: pi_puck/tof_sensor_5,
+        data_type: LaserScan,
+        topic: topic_name,
+        marking: true,
+        clearing: true,
+    }
+#point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}
