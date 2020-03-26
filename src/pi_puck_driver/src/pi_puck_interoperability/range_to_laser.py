@@ -9,6 +9,7 @@ import rospy
 from sensor_msgs.msg import Range, LaserScan
 
 PREFIX = "interop/range_to_laser"
+COMBINED = "interop/range_to_laser/combined"
 
 
 class RangeToLaserScan(object):
@@ -18,21 +19,31 @@ class RangeToLaserScan(object):
         """Initialise node."""
         rospy.init_node("range_to_laser")
 
+        publish_combined_topic = bool(rospy.get_param('~publish_combined_topic', True))
         robot_root = rospy.get_param("~robot_root", rospy.get_namespace())
         range_publishers = tuple(topic
                                  for topic, topic_type in rospy.get_published_topics(robot_root)
                                  if topic_type == "sensor_msgs/Range")
 
+        if publish_combined_topic:
+            combined_topic = rospy.Publisher(posixpath.join(robot_root, COMBINED),
+                                             LaserScan,
+                                             queue_size=10)
+        else:
+            combined_topic = None
+
         for topic in range_publishers:
             new_topic = posixpath.join(PREFIX, posixpath.relpath(topic, robot_root))
             new_topic = posixpath.join(robot_root, new_topic)
             publisher = rospy.Publisher(new_topic, LaserScan, queue_size=10)
-            publisher_handler = partial(self.republish_laser_scan, publisher)
+            publisher_handler = partial(self.republish_laser_scan,
+                                        publisher,
+                                        combined_publisher=combined_topic)
             rospy.Subscriber(topic, Range, publisher_handler)
 
         self._running = True
 
-    def republish_laser_scan(self, publisher, data):
+    def republish_laser_scan(self, publisher, data, combined_publisher=None):
         """Publish range as laser scan."""
         if not self._running:
             return
@@ -50,6 +61,9 @@ class RangeToLaserScan(object):
         laser_scan_message.header.frame_id = data.header.frame_id
 
         publisher.publish(laser_scan_message)
+
+        if combined_publisher is not None:
+            combined_publisher.publish(laser_scan_message)
 
     def run(self):
         """ROS Node server."""

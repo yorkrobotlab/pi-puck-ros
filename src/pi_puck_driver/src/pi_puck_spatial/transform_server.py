@@ -35,6 +35,7 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
         self._use_imu = bool(rospy.get_param('~use_imu', True))
         self._use_hybrid_position = bool(rospy.get_param('~use_hybrid_position', True))
         self._publish_hybrid_position = bool(rospy.get_param('~publish_hybrid_position', True))
+        self._use_map_as_parent = bool(rospy.get_param('~use_map_as_parent', False))
 
         self._robot_description_raw = rospy.get_param("robot_description", None)
         self._tf_prefix = rospy.get_param("tf_prefix", None)
@@ -110,11 +111,12 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
 
     def send_pi_puck_transform(self):
         """Send transform for Pi-puck."""
-        self._broadcaster.sendTransform(translation=self._current_xyz,
-                                        rotation=self._current_quaternion,
-                                        time=rospy.Time.now(),
-                                        child=self._tf_prefix + "base_link",
-                                        parent="map")
+        self._broadcaster.sendTransform(
+            translation=self._current_xyz,
+            rotation=self._current_quaternion,
+            time=rospy.Time.now(),
+            child=self._tf_prefix + "base_link",
+            parent="map" if self._use_map_as_parent else self._tf_prefix + "odom")
 
     def imu_data_callback(self, data):
         """IMU data callback handler."""
