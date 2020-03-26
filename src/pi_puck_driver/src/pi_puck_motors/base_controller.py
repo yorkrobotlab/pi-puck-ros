@@ -43,9 +43,10 @@ class PiPuckBaseController(object):
         self._fixed_rate = bool(rospy.get_param('~fixed_rate', False))
         motor_speed_mode = rospy.get_param('~motor_control_mode', "simple")
 
-        if motor_speed_mode in PiPuckBaseController.MOTOR_SPEED_MAPPING_MODES:
-            self._motor_speed_mapper_function = PiPuckBaseController.MOTOR_SPEED_MAPPING_MODES[
-                motor_speed_mode]
+        if motor_speed_mode == "simple":
+            self._motor_speed_mapper_function = PiPuckBaseController.calculate_motor_speeds_simple
+        elif motor_speed_mode == "complex":
+            self._motor_speed_mapper_function = PiPuckBaseController.calculate_motor_speeds_complex
         else:
             raise Exception("Invalid motor control mapping mode")
 
@@ -71,7 +72,7 @@ class PiPuckBaseController(object):
         self._speed_right_pub.publish(motor_right_speed)
 
     @staticmethod
-    def calculate_motor_speeds_simplistic(linear, angular):
+    def calculate_motor_speeds_simple(linear, angular):
         """Calculate motor speed percentages."""
         motor_left_speed = (linear.x + (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
         motor_right_speed = (linear.x - (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
@@ -96,11 +97,6 @@ class PiPuckBaseController(object):
         motor_left_speed = (forward_percent + rotation_percent) / magnitude
 
         return motor_left_speed, motor_right_speed
-
-    MOTOR_SPEED_MAPPING_MODES = {
-        "simple": calculate_motor_speeds_simplistic,
-        "complex": calculate_motor_speeds_complex
-    }
 
     def run(self):
         """Run the base controller."""
