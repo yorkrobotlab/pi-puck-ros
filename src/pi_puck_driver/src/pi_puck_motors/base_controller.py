@@ -110,7 +110,7 @@ class PiPuckBaseController(object):
         forward_percent = PiPuckBaseController.smooth_motor_speed(self._smoothing.linear,
                                                                   forward_percent)
 
-        magnitude = 1 + abs(rotation_percent)
+        magnitude = 1 + min(abs(rotation_percent), abs(forward_percent))
 
         motor_right_speed = (forward_percent + rotation_percent) / magnitude
         motor_left_speed = (forward_percent - rotation_percent) / magnitude

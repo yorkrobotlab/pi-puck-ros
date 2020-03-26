@@ -4,7 +4,7 @@ raytrace_range: 1.0
 robot_radius: 0.035
 inflation_radius: 0.05
 
-observation_sources: long_range_ir_sensor_0 long_range_ir_sensor_1 long_range_ir_sensor_2 long_range_ir_sensor_3 long_range_ir_sensor_4 long_range_ir_sensor_5
+observation_sources: tof_sensor_0 tof_sensor_1 tof_sensor_2 tof_sensor_3 tof_sensor_4 tof_sensor_5
 
 tof_sensor_0:
     {
