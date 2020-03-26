@@ -48,7 +48,7 @@ class PiPuckTOFSensorServer:
         if tf_prefix is not None and not tf_prefix.endswith("/"):
             tf_prefix += "/"
 
-        self._rate_raw = float(rospy.get_param('~rate', 1))
+        self._rate_raw = float(rospy.get_param('~rate', 2))
 
         self._rate = rospy.Rate(self._rate_raw)
 
@@ -109,6 +109,7 @@ class PiPuckTOFSensorServer:
                                  range=self.read_sensor(),
                                  field_of_view=FOV)
             range_result.header.frame_id = self._tf_reference_frame
+            range_result.header.stamp = rospy.Time.now()
             self._sensor_publisher.publish(range_result)
             self._rate.sleep()
 

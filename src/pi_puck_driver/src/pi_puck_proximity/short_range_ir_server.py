@@ -113,6 +113,7 @@ def pi_puck_short_range_ir_server():
                                  range=converted_distance_reading,
                                  field_of_view=FOV)
             range_result.header.frame_id = ir_proximity_frame_ids[ir_sensor]
+            range_result.header.stamp = rospy.Time.now()
             ir_proximity_publishers[ir_sensor].publish(range_result)
         rate.sleep()
 
