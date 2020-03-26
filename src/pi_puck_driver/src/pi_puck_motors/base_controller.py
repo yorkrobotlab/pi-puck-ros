@@ -67,7 +67,8 @@ class PiPuckBaseController(object):
 
     def update_motor_speeds(self):
         """Send motor speed update messages."""
-        motor_left_speed, motor_right_speed = self._motor_speed_mapper_function()
+        motor_left_speed, motor_right_speed = self._motor_speed_mapper_function(
+            self._target_linear, self._target_angular)
         self._speed_left_pub.publish(motor_left_speed)
         self._speed_right_pub.publish(motor_right_speed)
 
