@@ -2,7 +2,7 @@
 """ROS Node to take velocity messages and output motor speeds."""
 
 # Python libs
-from math import pi
+from math import pi, copysign
 from collections import namedtuple
 
 # ROS imports
@@ -83,7 +83,7 @@ class PiPuckBaseController(object):
         """Apply smoothing."""
         if smoothing == 1.0 or smoothing <= 0:
             return velocity_percent
-        return velocity_percent**smoothing
+        return copysign(abs(velocity_percent)**smoothing, velocity_percent)
 
     @staticmethod
     def calculate_motor_speeds_simple(linear, angular):
