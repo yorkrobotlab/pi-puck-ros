@@ -48,7 +48,7 @@ class PiPuckTOFSensorServer:
         if tf_prefix is not None and not tf_prefix.endswith("/"):
             tf_prefix += "/"
 
-        self._rate_raw = float(rospy.get_param('~rate', 2))
+        self._rate_raw = float(rospy.get_param('~rate', 1))
 
         self._rate = rospy.Rate(self._rate_raw)
 
