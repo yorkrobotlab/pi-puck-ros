@@ -155,7 +155,11 @@ def main():
     """Application entry point."""
     argument_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 
-    argument_parser.add_argument("-s", "--samples", default=8000, type=int, help="Number of samples to take.")
+    argument_parser.add_argument("-s",
+                                 "--samples",
+                                 default=8000,
+                                 type=int,
+                                 help="Number of samples to take.")
     argument_parser.add_argument("-i",
                                  "--interval",
                                  default=0.05,

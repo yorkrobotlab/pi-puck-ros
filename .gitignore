@@ -52,6 +52,7 @@ CATKIN_IGNORE
 
 # VS Code
 .vscode/
+.mypy_cache/
 
 # Ignore generated docs
 doc/
