@@ -28,11 +28,6 @@ def clamp(value, value_max=1, value_min=0):
 class PiPuckBaseController(object):
     """ROS Node to expose topics relating to the Pi-puck motors."""
 
-    MOTOR_SPEED_MAPPING_MODES = {
-        "simple": calculate_motor_speeds_simplistic,
-        "complex": calculate_motor_speeds_complex
-    }
-
     def __init__(self):
         """Initialise node."""
         rospy.on_shutdown(self.stop_motors)
@@ -101,6 +96,11 @@ class PiPuckBaseController(object):
         motor_left_speed = (forward_percent + rotation_percent) / magnitude
 
         return motor_left_speed, motor_right_speed
+
+    MOTOR_SPEED_MAPPING_MODES = {
+        "simple": PiPuckBaseController.calculate_motor_speeds_simplistic,
+        "complex": PiPuckBaseController.calculate_motor_speeds_complex
+    }
 
     def run(self):
         """Run the base controller."""
