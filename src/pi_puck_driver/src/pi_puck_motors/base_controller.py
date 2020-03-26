@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 """ROS Node to take velocity messages and output motor speeds."""
 
 # Python libs
