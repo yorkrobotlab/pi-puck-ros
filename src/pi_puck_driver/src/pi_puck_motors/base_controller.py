@@ -98,8 +98,8 @@ class PiPuckBaseController(object):
         return motor_left_speed, motor_right_speed
 
     MOTOR_SPEED_MAPPING_MODES = {
-        "simple": PiPuckBaseController.calculate_motor_speeds_simplistic,
-        "complex": PiPuckBaseController.calculate_motor_speeds_complex
+        "simple": calculate_motor_speeds_simplistic,
+        "complex": calculate_motor_speeds_complex
     }
 
     def run(self):
