@@ -41,7 +41,7 @@ class PiPuckBaseController(object):
 
         self._rate = rospy.Rate(rospy.get_param('~rate', 10))
         self._fixed_rate = bool(rospy.get_param('~fixed_rate', False))
-        motor_speed_mode = rospy.get_param('~motor_control_mode', "simple")
+        motor_speed_mode = rospy.get_param('~motor_control_mode', "complex")
 
         if motor_speed_mode == "simple":
             self._motor_speed_mapper_function = PiPuckBaseController.calculate_motor_speeds_simple
@@ -75,8 +75,8 @@ class PiPuckBaseController(object):
     @staticmethod
     def calculate_motor_speeds_simple(linear, angular):
         """Calculate motor speed percentages."""
-        motor_left_speed = (linear.x + (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
-        motor_right_speed = (linear.x - (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
+        motor_left_speed = (linear.x - (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
+        motor_right_speed = (linear.x + (WHEEL_SEPARATION / 2.0) * angular.z) / WHEEL_DIAMETER
 
         return motor_left_speed, motor_right_speed
 
@@ -94,8 +94,8 @@ class PiPuckBaseController(object):
 
         magnitude = 1 + abs(rotation_percent)
 
-        motor_right_speed = (forward_percent - rotation_percent) / magnitude
-        motor_left_speed = (forward_percent + rotation_percent) / magnitude
+        motor_right_speed = (forward_percent + rotation_percent) / magnitude
+        motor_left_speed = (forward_percent - rotation_percent) / magnitude
 
         return motor_left_speed, motor_right_speed
 
