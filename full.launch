@@ -4,6 +4,7 @@
     <param name="tf_prefix" value="$(optenv ROBOT_NAME pi_puck)"/>
     <group ns="navigation">
       <node name="motors" pkg="pi_puck_driver" type="motor_server.py" />
+      <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py" />
       <group ns="proximity">
         <node name="short_range_ir_server" pkg="pi_puck_driver" type="short_range_ir_server.py">
           <param name="sensor" value="0" />
