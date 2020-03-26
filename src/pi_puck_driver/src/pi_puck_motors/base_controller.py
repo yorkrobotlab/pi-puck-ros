@@ -41,7 +41,7 @@ class PiPuckBaseController(object):
 
         self._rate = rospy.Rate(rospy.get_param('~rate', 10))
         self._fixed_rate = bool(rospy.get_param('~fixed_rate', False))
-        motor_speed_mode = rospy.Rate(rospy.get_param('~motor_control_mode', "simple"))
+        motor_speed_mode = rospy.get_param('~motor_control_mode', "simple")
 
         if motor_speed_mode in PiPuckBaseController.MOTOR_SPEED_MAPPING_MODES:
             self._motor_speed_mapper_function = PiPuckBaseController.MOTOR_SPEED_MAPPING_MODES[
