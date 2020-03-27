@@ -1,35 +1,47 @@
 <launch>
-  <group ns="$(optenv ROBOT_NAME pi_puck)">
+  <arg name="robot_name" value="$(optenv ROBOT_NAME pi_puck)" />
+  <arg name="tof_rate" value="2" />
+  <arg name="full_imu_orientation" value="false" />
+  <arg name="imu_sample_rate" value="10" />
+
+  <group ns="$(arg robot_name)">
     <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>
-    <param name="tf_prefix" value="$(optenv ROBOT_NAME pi_puck)"/>
+    <param name="tf_prefix" value="$(arg robot_name)"/>
     <group ns="navigation">
       <node name="motors" pkg="pi_puck_driver" type="motor_server.py" />
       <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py" />
       <group ns="proximity">
-        <node name="short_range_ir_server" pkg="pi_puck_driver" type="short_range_ir_server.py">
-          <param name="sensor" value="0" />
-        </node>
+        <node name="short_range_ir_server" pkg="pi_puck_driver" type="short_range_ir_server.py" />
         <node name="long_range_ir_server_0" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="0" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
         <node name="long_range_ir_server_1" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="1" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
         <node name="long_range_ir_server_2" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="2" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
         <node name="long_range_ir_server_3" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="3" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
         <node name="long_range_ir_server_4" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="4" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
         <node name="long_range_ir_server_5" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="5" />
+          <param name="rate" value="$(arg tof_rate)" />
         </node>
       </group>
       <group ns="spatial">
-        <node name="imu" pkg="pi_puck_driver" type="imu_server.py" />
+        <node name="imu" pkg="pi_puck_driver" type="imu_server.py">
+          <param name="calculate_full_orientation" value="$(arg full_imu_orientation)" />
+          <param name="sample_rate" value="$(arg imu_sample_rate)" />
+        </node>
       </group>
     </group>
     <node name="power" pkg="pi_puck_driver" type="power_server.py" />
