@@ -1,10 +1,11 @@
 <launch>
-  <group ns="$(optenv ROBOT_NAME pi_puck)">
-    <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>
-    <param name="tf_prefix" value="$(optenv ROBOT_NAME pi_puck)"/>
+  <arg name="robot_name" value="$(optenv ROBOT_NAME pi_puck)" />
+
+  <group ns="$(arg robot_name)">
+    <param name="tf_prefix" value="$(arg robot_name)"/>
     <group ns="interop">
       <node name="range_to_laser" pkg="pi_puck_driver" type="range_to_laser.py">
-        <param name="robot_root" value="/$(optenv ROBOT_NAME pi_puck)/" />
+        <param name="robot_root" value="/$(arg robot_name)/" />
       </node>
     </group>
   </group>
