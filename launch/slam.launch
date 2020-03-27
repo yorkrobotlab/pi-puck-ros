@@ -1,11 +1,11 @@
 <launch>
   <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
 
-  <include file="tf_simple.launch">
+  <include file="launch/tf_simple.launch">
       <arg name="tf_rate" value="30" />
   </include>
 
-  <include file="interop.launch" />
+  <include file="launch/interop.launch" />
 
   <node name="slam_karto" pkg="slam_karto" type="slam_karto" output="screen">
     <remap from="$(arg robot_name)/interop/range_to_laser/combined" to="scan" />
