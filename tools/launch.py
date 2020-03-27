@@ -56,11 +56,6 @@ def main():
 
     parsed_args = arg_parser.parse_args()
 
-    if os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                    "devel")) not in os.environ["PKG_CONFIG_PATH"]:
-        print("Please run `source devel/setup.bash first.`")
-        return
-
     if parsed_args.ros_ip:
         ros_ip = parsed_args.ros_ip
     else:
