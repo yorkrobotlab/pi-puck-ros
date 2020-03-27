@@ -1,8 +1,8 @@
 <launch>
-  <arg name="robot_name" value="$(optenv ROBOT_NAME pi_puck)" />
-  <arg name="tof_rate" value="2" />
-  <arg name="full_imu_orientation" value="false" />
-  <arg name="imu_sample_rate" value="10" />
+  <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
+  <arg name="tof_rate" default="2" />
+  <arg name="full_imu_orientation" default="false" />
+  <arg name="imu_sample_rate" default="10" />
 
   <group ns="$(arg robot_name)">
     <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>

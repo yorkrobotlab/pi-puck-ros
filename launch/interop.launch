@@ -1,5 +1,5 @@
 <launch>
-  <arg name="robot_name" value="$(optenv ROBOT_NAME pi_puck)" />
+  <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
 
   <group ns="$(arg robot_name)">
     <param name="tf_prefix" value="$(arg robot_name)"/>

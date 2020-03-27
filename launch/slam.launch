@@ -1,5 +1,5 @@
 <launch>
-  <arg name="robot_name" value="$(optenv ROBOT_NAME pi_puck)" />
+  <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
 
   <include file="tf_simple.launch">
       <arg name="tf_rate" value="30" />
