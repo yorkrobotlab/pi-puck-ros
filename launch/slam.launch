@@ -8,10 +8,10 @@
   <include file="launch/interop.launch" />
 
   <node name="slam_karto" pkg="slam_karto" type="slam_karto" output="screen">
-    <remap from="$(arg robot_name)/interop/range_to_laser/combined" to="scan" />
+    <remap to="$(arg robot_name)/interop/range_to_laser/combined" from="scan" />
     <param name="odom_frame" value="$(arg robot_name)/odom" />
     <param name="base_frame" value="$(arg robot_name)/base_link" />
-    <param name="delta" value="0.1" />
+    <param name="delta" value="0.02" />
     <param name="minimum_travel_distance" value="0.05" />
   </node>
 
