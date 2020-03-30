@@ -1,0 +1,10 @@
+<launch>
+  <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
+
+  <group ns="$(arg robot_name)">
+    <node name="power_meter" pkg="pi_puck_examples" type="power_meter.py">
+      <param name="battery_topic" node="/$(arg robot_name)/power/battery" />
+      <param name="display_topic" node="/$(arg robot_name)/display/oled/image" />
+    </node>
+  </group>
+</launch>
