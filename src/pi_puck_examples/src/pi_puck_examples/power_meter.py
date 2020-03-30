@@ -24,10 +24,9 @@ def update_power_meter(data, publisher):
     image = Image.new("1", (OLED_WIDTH, OLED_HEIGHT))
     draw = ImageDraw.Draw(image)
 
-    draw.rectangle([(0, OLED_HEIGHT // 2), (int(
-        OLED_WIDTH * battery_percent), OLED_HEIGHT)],
+    draw.rectangle([(0, OLED_HEIGHT // 2), (int(OLED_WIDTH * battery_percent), OLED_HEIGHT)],
                    fill=0xff)
-    draw.text((2, 2), str(int(battery_percent * 100)), font=FONT, fill=0xff)
+    draw.text((2, 2), "Battery: " + str(int(battery_percent * 100)) + "%", font=FONT, fill=0xff)
 
     image_message = ImageMessage()
     image_message.data = image.convert("L").tobytes()
