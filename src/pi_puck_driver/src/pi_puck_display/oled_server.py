@@ -47,7 +47,7 @@ class PiPuckOledServer(object):
         image = PiPuckOledServer.convert_ros_image_to_pil(data)
         with canvas(self._device) as draw:
             draw.rectangle((0, 0, OLED_WIDTH, OLED_HEIGHT), outline=0, fill=0x00)
-            draw.im.paste(image)
+            draw.im.paste(image, box=(0,0))
 
     @staticmethod
     def convert_ros_image_to_pil(ros_image):

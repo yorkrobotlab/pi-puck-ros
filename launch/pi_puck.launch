@@ -15,7 +15,7 @@
 
       <!-- base controller for following cmd_vel messages. -->
       <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py">
-        <remap to="$(arg robot_name)/cmd_vel" from="/cmd_vel" />
+        <remap from="$(arg robot_name)/cmd_vel" to="/cmd_vel" />
       </node>
 
       <group ns="proximity">
