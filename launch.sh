@@ -2,4 +2,4 @@
 
 source devel/setup.bash
 
-tools/launch.py $1
+tools/launch.py "$@"
