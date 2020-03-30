@@ -31,7 +31,7 @@ class PiPuckOledServer(object):
 
         self._persist = bool(rospy.get_param("~persist", True))
         font_path = str(rospy.get_param("~font_path", DEFAULT_FONT))
-        font_size = float(rospy.get_param("~font_size", 14))
+        font_size = int(rospy.get_param("~font_size", 14))
         self._font = ImageFont.truetype(font_path, font_size)
 
         self._device = None
