@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 OLED_WIDTH = 128
 OLED_HEIGHT = 32
 
-FONT = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 14)
+FONT = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 12)
 
 
 def update_power_meter(data, publisher):
