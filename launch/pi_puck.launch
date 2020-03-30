@@ -5,13 +5,27 @@
   <arg name="imu_sample_rate" default="10" />
 
   <group ns="$(arg robot_name)">
+    <!-- TF prefix and robot namespace allow multiple Pi-pucks to exist in the same ROS network. -->
     <param name="robot_description" textfile="$(find pi_puck_driver)/urdf/pi_puck_urdf.xml"/>
     <param name="tf_prefix" value="$(arg robot_name)"/>
+
     <group ns="navigation">
+      <!-- Motor controller node. -->
       <node name="motors" pkg="pi_puck_driver" type="motor_server.py" />
-      <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py" />
+
+      <!-- base controller for following cmd_vel messages. -->
+      <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py">
+        <remap to="$(arg robot_name)/cmd_vel" from="/cmd_vel" />
+      </node>
+
       <group ns="proximity">
+        <!-- e-puck IR reflectance sensors. -->
         <node name="short_range_ir_server" pkg="pi_puck_driver" type="short_range_ir_server.py" />
+
+        <!--
+          ToF distance sensors, will fail to start sensors are not connected, but won't stop the
+          whole launch file.
+        -->
         <node name="long_range_ir_server_0" pkg="pi_puck_driver" type="long_range_ir_server.py">
           <param name="sensor" value="0" />
           <param name="rate" value="$(arg tof_rate)" />
@@ -36,14 +50,22 @@
           <param name="sensor" value="5" />
           <param name="rate" value="$(arg tof_rate)" />
         </node>
-      </group>
+      </group> <!-- /proximity -->
+
       <group ns="spatial">
         <node name="imu" pkg="pi_puck_driver" type="imu_server.py">
           <param name="calculate_full_orientation" value="$(arg full_imu_orientation)" />
           <param name="sample_rate" value="$(arg imu_sample_rate)" />
         </node>
-      </group>
-    </group>
+      </group> <!-- /spatial -->
+
+    </group> <!-- /navigation -->
+
+    <group ns="display">
+      <node name="oled" pkg="pi_puck_driver" type="oled_server.py" />
+    </group> <!-- /display -->
+
     <node name="power" pkg="pi_puck_driver" type="power_server.py" />
-  </group>
+  </group><!-- /robot -->
+
 </launch>
