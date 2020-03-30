@@ -13,12 +13,14 @@ def get_local_ip():
     try:
         # doesn't even have to be reachable
         sock.connect(('8.8.8.8', 1))
-        ip = sock.getsockname()[0]
-    except:
-        ip = '127.0.0.1'
+        ip_address = sock.getsockname()[0]
+    except socket.error:
+        ip_address = '127.0.0.1'
+    except IndexError:
+        ip_address = '127.0.0.1'
     finally:
         sock.close()
-    return ip
+    return ip_address
 
 
 def get_ros_master_ip():
@@ -53,8 +55,13 @@ def main():
     arg_parser.add_argument("launch_file", type=str)
     arg_parser.add_argument("-m", "--ros-master", required=False, type=str)
     arg_parser.add_argument("-i", "--ros-ip", required=False, type=str)
+    arg_parser.add_argument("-r", "--robot-name", required=False, type=str)
+    arg_parser.add_argument("-a", "--auto-robot-name", action="store_true")
 
     parsed_args = arg_parser.parse_args()
+
+    if parsed_args.robot_name is not None and parsed_args.auto_robot_name:
+        arg_parser.error("--robot-name and --auto-robot-name are mutually exclusive.")
 
     if parsed_args.ros_ip:
         ros_ip = parsed_args.ros_ip
@@ -71,8 +78,20 @@ def main():
     os.environ["ROS_IP"] = ros_ip
     os.environ["ROS_MASTER_URI"] = "http://{}:11311".format(ros_master)
 
-    # roslaunch assumes that the first argument is the command that launched it and ignores it,
-    # therefore we need to pass "roslaunch" again.
+    robot_name = None
+
+    # Set robot name, possibly automagically
+    if parsed_args.robot_name is not None:
+        robot_name = parsed_args.robot_name
+    elif parsed_args.auto_robot_name:
+        robot_name = socket.gethostname().replace("-", "_")
+
+    if robot_name is not None:
+        print("Using robot name {}".format(robot_name))
+        os.environ["ROBOT_NAME"] = robot_name
+
+    # roslaunch assumes that the first argument is the command that launched it and ignores it (as
+    # is standard), therefore we need to pass "roslaunch" again.
     os.execlp("roslaunch", "roslaunch", os.path.abspath(parsed_args.launch_file))
 
 
