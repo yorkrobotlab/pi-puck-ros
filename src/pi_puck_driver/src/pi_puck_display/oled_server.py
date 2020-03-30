@@ -38,16 +38,24 @@ class PiPuckOledServer(object):
 
     def string_callback(self, data):
         """Handle requests to display string on OLED."""
+        if self._device is None:
+            return
+
         with canvas(self._device) as draw:
             draw.rectangle((0, 0, OLED_WIDTH, OLED_HEIGHT), outline=0, fill=0x00)
             draw.text((0, 0), data.data, font=self._font, fill=0xFF)
 
     def image_callback(self, data):
         """Handle requests to display image on OLED."""
+        if self._device is None:
+            return
+
         image = PiPuckOledServer.convert_ros_image_to_pil(data)
-        with canvas(self._device) as draw:
-            draw.rectangle((0, 0, OLED_WIDTH, OLED_HEIGHT), outline=0, fill=0x00)
-            draw.im.paste(image, (0, 0, OLED_WIDTH, OLED_HEIGHT))
+
+        if data.width != OLED_WIDTH or data.height != OLED_HEIGHT:
+            image = image.resize((OLED_WIDTH, OLED_HEIGHT))
+
+        self._device.display(image.convert("1"))
 
     @staticmethod
     def convert_ros_image_to_pil(ros_image):
@@ -63,10 +71,7 @@ class PiPuckOledServer(object):
         else:
             rospy.logerr("Unsupported encoding '{}'.".format(ros_image.encoding))
 
-        if ros_image.width == OLED_WIDTH and ros_image.height == OLED_HEIGHT:
-            return image
-
-        return image.resize((OLED_WIDTH, OLED_HEIGHT))
+        return image.convert("RGB")
 
     def close_device(self):
         """Close device and cleanup."""

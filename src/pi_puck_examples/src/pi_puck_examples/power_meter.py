@@ -21,7 +21,7 @@ def update_power_meter(data, publisher):
     """Update the power meter with battery reading."""
     battery_percent = float(data.percentage)
 
-    image = Image.new("L", (OLED_WIDTH, OLED_HEIGHT))
+    image = Image.new("1", (OLED_WIDTH, OLED_HEIGHT))
     draw = ImageDraw.Draw(image)
 
     draw.rectangle([(0, OLED_HEIGHT // 2), (int(
@@ -30,7 +30,7 @@ def update_power_meter(data, publisher):
     draw.text((2, 2), str(int(battery_percent * 100)), font=FONT, fill=0xff)
 
     image_message = ImageMessage()
-    image_message.data = image.tobytes()
+    image_message.data = image.convert("L").tobytes()
     image_message.width = image.width
     image_message.height = image.height
     image_message.step = image.width
