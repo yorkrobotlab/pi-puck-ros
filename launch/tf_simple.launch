@@ -9,6 +9,8 @@
       <param name="use_imu" value="false"/>
       <param name="use_hybrid_position" value="false"/>
       <param name="rate" value="$(arg tf_rate)" />
+      <param name="publish_static_transforms" value="false" />
     </node>
+   <node pkg="robot_state_publisher" type="robot_state_publisher" name="static_transform_publisher" />
   </group>
 </launch>
