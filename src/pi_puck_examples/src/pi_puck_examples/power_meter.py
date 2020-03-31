@@ -14,6 +14,8 @@ from PIL import Image, ImageDraw, ImageFont
 OLED_WIDTH = 128
 OLED_HEIGHT = 32
 
+FONT_PADDING = 2
+FONT_SIZE = 12
 FONT = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 12)
 
 
@@ -26,7 +28,27 @@ def update_power_meter(data, publisher):
 
     draw.rectangle([(0, OLED_HEIGHT // 2), (int(OLED_WIDTH * battery_percent), OLED_HEIGHT)],
                    fill=0xff)
-    draw.text((2, 2), "Battery: " + str(int(battery_percent * 100)) + "%", font=FONT, fill=0xff)
+
+    percent_text = str(int(battery_percent * 100))
+    status_text = "Unknown"
+
+    if data.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_FULL:
+        status_text = "Charged"
+    elif data.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_CHARGING:
+        status_text = "Charging"
+        percent_text = "??"
+    elif data.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_DISCHARGING:
+        status_text = "Discharging"
+
+    draw.text((FONT_PADDING, FONT_PADDING),
+              "Battery: " + percent_text + "%",
+              font=FONT,
+              fill=0xff)
+
+    draw.text((FONT_PADDING, OLED_HEIGHT - FONT_PADDING - FONT_SIZE),
+              status_text,
+              font=FONT,
+              fill=0x00)
 
     image_message = ImageMessage()
     image_message.data = image.convert("L").tobytes()

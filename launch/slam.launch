@@ -13,8 +13,9 @@
 
     <param name="~odom_frame" value="$(arg robot_name)/odom" />
     <param name="~base_frame" value="$(arg robot_name)/base_link" />
-    <param name="~delta" value="0.025" />
-    <param name="~minimum_travel_distance" value="0.01" />
+    <param name="~delta" value="0.02" />
+    <param name="~minimum_travel_distance" value="0.02" />
+    <param name="~link_scan_maximum_distance " value="0.1" />
   </node>
 
 </launch>
