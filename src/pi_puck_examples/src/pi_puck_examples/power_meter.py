@@ -40,12 +40,12 @@ def update_power_meter(data, publisher):
     elif data.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_DISCHARGING:
         status_text = "Discharging"
     elif data.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_NOT_CHARGING:
-        status_text = "Not Charging"
+        status_text = "Slow Charging"
         percent_text = "??"
 
     draw.text((FONT_PADDING, FONT_PADDING), "Battery: " + percent_text + "%", font=FONT, fill=0xff)
 
-    draw.text((FONT_PADDING, OLED_HEIGHT - FONT_PADDING - FONT_SIZE),
+    draw.text((FONT_PADDING, OLED_HEIGHT - 2*FONT_PADDING - FONT_SIZE),
               status_text,
               font=FONT,
               fill=0x00)
