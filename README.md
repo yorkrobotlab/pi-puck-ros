@@ -55,7 +55,7 @@ The following features are currently supported:
 
 ## Documentation
 
-For full documentation see the repository [Wiki](./wiki).
+For full documentation see the repository [Wiki](./../../wiki).
 
 ## Robot Model (URDF)
 
