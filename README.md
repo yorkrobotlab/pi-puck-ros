@@ -47,8 +47,8 @@ The following features are currently supported:
   - [ ] Microphones
 - [x] Power
   - [x] Battery ADC
-- [ ] Display
-  - [ ] OLED
+- [x] Display
+  - [x] OLED
 - [ ] I/O
   - [ ] ADC
   - [ ] Navigation switch
