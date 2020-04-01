@@ -26,16 +26,16 @@ RANGE_SENSORS = {
 
 SCAN_START = radians(-90)
 SCAN_END = radians(90)
-SCAN_STEP = radians(22.5)
+SCAN_STEP = radians(20)
 SCAN_STEPS = int((SCAN_END - SCAN_START) / SCAN_STEP)
 
-RELEVANCE_DISTANCE = radians(45)
-EFFECT_SMOOTHING = 1.5
+RELEVANCE_DISTANCE = radians(25)
+EFFECT_SMOOTHING = 2.5
 
 INF = float("inf")
 
-MAX_RANGE = 1.2
-MIN_RANGE = 0.005
+MAX_RANGE = 1.35
+MIN_RANGE = 0
 
 REFERENCE_FRAME_ID = "body_top"
 ROBOT_RADIUS = 0.035
@@ -48,7 +48,7 @@ class PiPuckRangeMerger(object):
         """Initialise node."""
         rospy.init_node("range_merger")
 
-        self._merged_topic = rospy.Publisher("interop/range_merger/scan", LaserScan, queue_size=10)
+        self._merged_topic = rospy.Publisher("range_merger/scan", LaserScan, queue_size=10)
 
         robot_root = rospy.get_param("~robot_root", rospy.get_namespace())
 
@@ -67,7 +67,7 @@ class PiPuckRangeMerger(object):
 
         self._rate = rospy.Rate(rospy.get_param('~rate', 1))
 
-        self._sensor_last_values = {key: INF for key, _ in RANGE_SENSORS}
+        self._sensor_last_values = {key: INF for key in RANGE_SENSORS}
         self._latest_message = rospy.Time.now()
 
         for sensor in RANGE_SENSORS:
@@ -83,7 +83,7 @@ class PiPuckRangeMerger(object):
 
     def calculate_reading(self, angle):
         """Calculate a combined reading for a point in the pseudo laser scan."""
-        relevant_sensors = (key for key, value in RANGE_SENSORS
+        relevant_sensors = (key for key, value in RANGE_SENSORS.items()
                             if abs(value - angle) < RELEVANCE_DISTANCE)
 
         effect_percents = 0
@@ -99,7 +99,7 @@ class PiPuckRangeMerger(object):
                 negative_infs += 1
             else:
                 sensor_angle = RANGE_SENSORS[sensor]
-                effect_percent = abs(sensor_angle - angle) / RELEVANCE_DISTANCE
+                effect_percent = 1 - (abs(sensor_angle - angle) / RELEVANCE_DISTANCE)
                 effect_percent = effect_percent**EFFECT_SMOOTHING
                 cumulative_value += sensor_value * effect_percent
                 effect_percents += effect_percent
@@ -127,9 +127,9 @@ class PiPuckRangeMerger(object):
         laser_scan_message.range_max = MAX_RANGE + ROBOT_RADIUS
         laser_scan_message.range_min = MIN_RANGE + ROBOT_RADIUS
 
-        laser_scan_message.angle_min = SCAN_START
-        laser_scan_message.angle_max = SCAN_END
-        laser_scan_message.angle_increment = SCAN_STEP
+        laser_scan_message.angle_min = SCAN_END
+        laser_scan_message.angle_max = SCAN_START
+        laser_scan_message.angle_increment = -SCAN_STEP
 
         laser_scan_message.ranges = [
             self.calculate_reading(step * SCAN_STEP + SCAN_START) for step in range(SCAN_STEPS + 1)
