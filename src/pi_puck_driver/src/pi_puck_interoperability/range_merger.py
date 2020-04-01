@@ -13,6 +13,8 @@ from sensor_msgs.msg import Range, LaserScan
 SENSOR_PREFIX = "navigation/proximity/"
 
 RANGE_SENSORS = {
+    "short_range_ir/4": radians(-135),
+    "long_range_ir/4": radians(-135),
     "short_range_ir/5": radians(-90),
     "short_range_ir/6": radians(-45),
     "long_range_ir/5": radians(-45),
@@ -22,15 +24,17 @@ RANGE_SENSORS = {
     "long_range_ir/1": radians(45),
     "short_range_ir/1": radians(45),
     "short_range_ir/2": radians(90),
+    "long_range_ir/2": radians(135),
+    "short_range_ir/3": radians(135),
 }
 
 SCAN_START = radians(-90)
 SCAN_END = radians(90)
-SCAN_STEP = radians(20)
+SCAN_STEP = radians(2.5)
 SCAN_STEPS = int((SCAN_END - SCAN_START) / SCAN_STEP)
 
-RELEVANCE_DISTANCE = radians(25)
-EFFECT_SMOOTHING = 2.5
+RELEVANCE_DISTANCE = radians(20)
+EFFECT_SMOOTHING = 1.5
 
 INF = float("inf")
 
