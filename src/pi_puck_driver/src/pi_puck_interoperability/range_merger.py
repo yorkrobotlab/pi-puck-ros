@@ -37,7 +37,7 @@ INF = float("inf")
 MAX_RANGE = 1.35
 MIN_RANGE = 0
 
-REFERENCE_FRAME_ID = "body_top"
+REFERENCE_FRAME_ID = "scan_base"
 ROBOT_RADIUS = 0.035
 
 
@@ -127,12 +127,14 @@ class PiPuckRangeMerger(object):
         laser_scan_message.range_max = MAX_RANGE + ROBOT_RADIUS
         laser_scan_message.range_min = MIN_RANGE + ROBOT_RADIUS
 
-        laser_scan_message.angle_min = SCAN_END
-        laser_scan_message.angle_max = SCAN_START
-        laser_scan_message.angle_increment = -SCAN_STEP
+        laser_scan_message.angle_min = SCAN_START
+        laser_scan_message.angle_max = SCAN_END
+        laser_scan_message.angle_increment = SCAN_STEP
 
+        # Laser scans are counter clockwise
         laser_scan_message.ranges = [
-            self.calculate_reading(step * SCAN_STEP + SCAN_START) for step in range(SCAN_STEPS + 1)
+            self.calculate_reading(step * SCAN_STEP + SCAN_START)
+            for step in reversed(range(SCAN_STEPS + 1))
         ]
 
         laser_scan_message.header.frame_id = self._tf_reference_frame

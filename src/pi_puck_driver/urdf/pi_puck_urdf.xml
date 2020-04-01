@@ -16,6 +16,14 @@
         </visual>
     </link>
 
+    <link name="scan_base" />
+
+    <joint name="base_to_scan_base" type="fixed">
+        <parent link="base_link"/>
+        <child link="scan_base"/>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    </joint>
+
     <link name="right_wheel">
         <visual>
             <geometry>
