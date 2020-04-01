@@ -4,11 +4,11 @@
   <group ns="$(arg robot_name)">
     <param name="tf_prefix" value="$(arg robot_name)"/>
     <group ns="interop">
-      <!-- Disabled by default as in most cases the range merger is better.
       <node name="range_to_laser" pkg="pi_puck_driver" type="range_to_laser.py">
         <param name="robot_root" value="/$(arg robot_name)/" />
+        <param name="publish_separate_topics" value="true" />
+        <param name="publish_combined_topic" value="false" />
       </node>
-      -->
       <node name="range_merger" pkg="pi_puck_driver" type="range_merger.py">
         <param name="robot_root" value="/$(arg robot_name)/" />
         <param name="rate" value="2" />
