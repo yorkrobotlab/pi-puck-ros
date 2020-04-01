@@ -63,7 +63,7 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
         self._broadcaster = tf.TransformBroadcaster()
 
         self._current_xyz = (0, 0, 0)
-        self._current_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0)
+        self._current_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0, axes='xyzs')
         self._current_angular = Vector3(0, 0, 0)
         self._current_linear = Vector3(0, 0, 0)
         self._steps_right = None
@@ -187,9 +187,9 @@ class PiPuckTransformServer(object):  # pylint: disable=too-many-instance-attrib
         (odometry_message.pose.pose.position.x, odometry_message.pose.pose.position.y,
          odometry_message.pose.pose.position.z) = self._current_xyz
 
-        (odometry_message.pose.pose.orientation.w, odometry_message.pose.pose.orientation.x,
-         odometry_message.pose.pose.orientation.y,
-         odometry_message.pose.pose.orientation.z) = self._current_quaternion
+        (odometry_message.pose.pose.orientation.x, odometry_message.pose.pose.orientation.y,
+         odometry_message.pose.pose.orientation.z,
+         odometry_message.pose.pose.orientation.w) = self._current_quaternion
 
         odometry_message.twist.twist.angular = self._current_angular
         odometry_message.twist.twist.angular = self._current_linear
