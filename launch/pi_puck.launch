@@ -14,9 +14,7 @@
       <node name="motors" pkg="pi_puck_driver" type="motor_server.py" />
 
       <!-- base controller for following cmd_vel messages. -->
-      <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py">
-        <remap to="$(arg robot_name)/cmd_vel" from="/cmd_vel" />
-      </node>
+      <node name="base_controller" pkg="pi_puck_driver" type="base_controller.py" />
 
       <group ns="proximity">
         <!-- e-puck IR reflectance sensors. -->
