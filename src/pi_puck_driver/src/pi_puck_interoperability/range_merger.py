@@ -28,8 +28,8 @@ RANGE_SENSORS = {
     "short_range_ir/3": radians(135),
 }
 
-SCAN_START = radians(-90)
-SCAN_END = radians(90)
+SCAN_START = radians(-135)
+SCAN_END = radians(135)
 SCAN_STEP = radians(2.5)
 SCAN_STEPS = int((SCAN_END - SCAN_START) / SCAN_STEP)
 

@@ -40,7 +40,7 @@ class PiPuckBaseController(object):
 
         rospy.init_node("base_controller")
 
-        rospy.Subscriber("/cmd_vel", Twist, self.callback_velocity)
+        rospy.Subscriber("cmd_vel", Twist, self.callback_velocity)
 
         self._rate = rospy.Rate(rospy.get_param('~rate', 10))
         self._fixed_rate = bool(rospy.get_param('~fixed_rate', False))
