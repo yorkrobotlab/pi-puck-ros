@@ -4,54 +4,54 @@ raytrace_range: 1.0
 robot_radius: 0.035
 inflation_radius: 0.05
 
-#observation_sources: tof_sensor_0 tof_sensor_1 tof_sensor_2 tof_sensor_3 tof_sensor_4 tof_sensor_5
-#
-#tof_sensor_0:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_0,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/0,
-#        marking: true,
-#        clearing: true,
-#    }
-#tof_sensor_1:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_1,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/1,
-#        marking: true,
-#        clearing: true,
-#    }
-#tof_sensor_2:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_2,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/2,
-#        marking: true,
-#        clearing: true,
-#    }
-#tof_sensor_3:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_3,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/3,
-#        marking: true,
-#        clearing: true,
-#    }
-#tof_sensor_4:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_4,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/4,
-#        marking: true,
-#        clearing: true,
-#    }
-#tof_sensor_5:
-#    {
-#        sensor_frame: pi_puck/tof_sensor_5,
-#        data_type: LaserScan,
-#        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/5,
-#        marking: true,
-#        clearing: true,
-#    }
+observation_sources: tof_sensor_0 tof_sensor_1 tof_sensor_2 tof_sensor_3 tof_sensor_4 tof_sensor_5
+
+tof_sensor_0:
+    {
+        sensor_frame: pi_puck/tof_sensor_0,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/0,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_1:
+    {
+        sensor_frame: pi_puck/tof_sensor_1,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/1,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_2:
+    {
+        sensor_frame: pi_puck/tof_sensor_2,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/2,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_3:
+    {
+        sensor_frame: pi_puck/tof_sensor_3,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/3,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_4:
+    {
+        sensor_frame: pi_puck/tof_sensor_4,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/4,
+        marking: true,
+        clearing: true,
+    }
+tof_sensor_5:
+    {
+        sensor_frame: pi_puck/tof_sensor_5,
+        data_type: LaserScan,
+        topic: /pi_puck/interop/range_to_laser/navigation/proximity/long_range_ir/5,
+        marking: true,
+        clearing: true,
+    }
 #point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}
