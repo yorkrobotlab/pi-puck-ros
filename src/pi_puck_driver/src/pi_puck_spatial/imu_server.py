@@ -145,9 +145,9 @@ class PiPuckImuServer(object):  # pylint: disable=too-many-instance-attributes
         s_r = math.sin(roll * 0.5)
 
         q_w = c_y * c_p * c_r + s_y * s_p * s_r
-        q_z = c_y * c_p * s_r - s_y * s_p * c_r
+        q_x = c_y * c_p * s_r - s_y * s_p * c_r
         q_y = s_y * c_p * s_r + c_y * s_p * c_r
-        q_x = s_y * c_p * c_r - c_y * s_p * s_r
+        q_z = s_y * c_p * c_r - c_y * s_p * s_r
 
         return Quaternion(x=q_x, y=q_y, z=q_z, w=q_w)
 
