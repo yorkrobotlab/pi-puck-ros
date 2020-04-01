@@ -15,7 +15,7 @@ SENSOR_PREFIX = "navigation/proximity/"
 RANGE_SENSORS = {
     "short_range_ir/5": radians(-90),
     "short_range_ir/6": radians(-45),
-    "long_range_ir/7": radians(-45),
+    "long_range_ir/5": radians(-45),
     "short_range_ir/7": radians(-10),
     "long_range_ir/0": radians(0),
     "short_range_ir/0": radians(10),
