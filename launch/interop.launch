@@ -7,6 +7,9 @@
       <node name="range_to_laser" pkg="pi_puck_driver" type="range_to_laser.py">
         <param name="robot_root" value="/$(arg robot_name)/" />
       </node>
+      <node name="range_merger" pkg="pi_puck_driver" type="range_merger.py">
+        <param name="robot_root" value="/$(arg robot_name)/" />
+      </node>
     </group>
   </group>
 </launch>
