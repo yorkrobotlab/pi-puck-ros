@@ -56,3 +56,7 @@ CATKIN_IGNORE
 
 # Ignore generated docs
 doc/
+
+# Ignore non-pi-puck sources
+src/*
+!src/pi_puck*
