@@ -1,0 +1,57 @@
+obstacle_range: 1.0
+raytrace_range: 0.1
+#footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
+robot_radius: 0.045
+inflation_radius: 0.05
+
+observation_sources: reflectance_sensor_0 reflectance_sensor_1 reflectance_sensor_2 reflectance_sensor_5 reflectance_sensor_6 reflectance_sensor_7
+
+reflectance_sensor_0:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_0,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/0,
+        marking: true,
+        clearing: true,
+    }
+reflectance_sensor_1:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_1,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/1,
+        marking: true,
+        clearing: true,
+    }
+reflectance_sensor_2:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_2,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/2,
+        marking: true,
+        clearing: true,
+    }
+reflectance_sensor_5:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_5,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/5,
+        marking: true,
+        clearing: true,
+    }
+reflectance_sensor_6:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_6,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/6,
+        marking: true,
+        clearing: true,
+    }
+reflectance_sensor_7:
+    {
+        sensor_frame: pi_puck_54/reflectance_sensor_7,
+        data_type: LaserScan,
+        topic: /pi_puck_54/interop/range_to_laser/navigation/proximity/short_range_ir/7,
+        marking: true,
+        clearing: true,
+    }
+#point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}

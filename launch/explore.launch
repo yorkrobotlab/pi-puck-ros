@@ -2,10 +2,10 @@
   <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
 
   <group ns="$(arg robot_name)">
-    <node name="explorer" pkg="explore_lite" type="explore">
-      <param name="costmap_updates_topic" value="/$(arg robot_name)/map_updates" />
-      <param name="costmap_topic" value="/$(arg robot_name)/map" />
-      <param name="robot_base_frame" value="$(arg robot_name)/base_link" />
+    <node name="explorer" pkg="explore_lite" type="explore" output="screen">
+      <param name="costmap_updates_topic" value="map_updates" />
+      <param name="costmap_topic" value="map" />
+      <param name="robot_base_frame" value="base_link" />
       <param name="min_frontier_size" value="0.1" />
     </node>
   </group>

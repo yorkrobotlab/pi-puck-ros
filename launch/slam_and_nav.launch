@@ -1,6 +1,6 @@
 <launch>
   <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
-  <arg name="costmap_param_suffix" default="" />
+  <arg name="config_selection" default="" />
 
   <include file="launch/slam.launch">
     <arg name="robot_name" value="$(arg robot_name)" />
@@ -8,7 +8,7 @@
 
   <include file="launch/nav.launch">
     <arg name="robot_name" value="$(arg robot_name)" />
-    <arg name="param_suffix" value="$(arg costmap_param_suffix)" />
+    <arg name="config_selection" value="$(arg config_selection)" />
   </include>
 
 </launch>
