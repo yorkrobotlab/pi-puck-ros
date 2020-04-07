@@ -1,15 +1,17 @@
 <launch>
   <arg name="robot_name" default="$(optenv ROBOT_NAME pi_puck)" />
+  <arg name="param_suffix" default="" />
 
   <group ns="$(arg robot_name)">
 
     <node pkg="move_base" type="move_base" respawn="false" name="move_base">
-        <remap to="navigation/cmd_vel" from="/cmd_vel" />
-        <rosparam file="nav/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="nav/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <remap to="navigation/cmd_vel" from="cmd_vel" />
+        <rosparam file="nav/costmap_common_params$(arg param_suffix).yaml" command="load" ns="global_costmap" />
+        <rosparam file="nav/costmap_common_params$(arg param_suffix).yaml" command="load" ns="local_costmap" />
         <rosparam file="nav/local_costmap_params.yaml" command="load" />
         <rosparam file="nav/global_costmap_params.yaml" command="load" />
         <rosparam file="nav/base_local_planner_params.yaml" command="load" />
+        <param name="base_global_planner" value="navfn/NavfnROS" />
     </node>
 
    </group>
