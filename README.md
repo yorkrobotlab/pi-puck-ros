@@ -50,7 +50,6 @@ The following features are currently supported:
 - [x] Display
   - [x] OLED
 - [ ] I/O
-  - [ ] ADC
   - [ ] Navigation switch
 
 ## Documentation
