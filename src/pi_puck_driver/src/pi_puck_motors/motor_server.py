@@ -160,18 +160,14 @@ class PiPuckMotorServer(object):
             measurement_time = rospy.get_time()
 
             # Check for overflows and underflows
-            if self._left_motor_speed > 0 and left_steps + (MAX_MOTOR_STEPS_RAW /
-                                                            2.0) < self._left_steps_previous:
+            if left_steps + (MAX_MOTOR_STEPS_RAW / 2.0) < self._left_steps_previous:
                 self._left_overflows += 1
-            elif self._left_motor_speed < 0 and left_steps > self._left_steps_previous + (
-                    MAX_MOTOR_STEPS_RAW / 2.0):
+            elif left_steps > self._left_steps_previous + (MAX_MOTOR_STEPS_RAW / 2.0):
                 self._left_overflows -= 1
 
-            if self._right_motor_speed > 0 and right_steps + (MAX_MOTOR_STEPS_RAW /
-                                                              2.0) < self._right_steps_previous:
+            if right_steps + (MAX_MOTOR_STEPS_RAW / 2.0) < self._right_steps_previous:
                 self._right_overflows += 1
-            elif self._right_motor_speed < 0 and right_steps > self._right_steps_previous + (
-                    MAX_MOTOR_STEPS_RAW / 2.0):
+            elif right_steps > self._right_steps_previous + (MAX_MOTOR_STEPS_RAW / 2.0):
                 self._right_overflows -= 1
 
             # Calculate the real steps left and right accounting for overflows
