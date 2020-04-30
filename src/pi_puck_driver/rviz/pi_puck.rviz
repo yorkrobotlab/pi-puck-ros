@@ -1,11 +1,15 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 189
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /Global Options1
+        - /PiPuck1
+        - /PiPuck1/Interop1/Merged Ranges1
+        - /PiPuck1/Transform1/TF1/Tree1
       Splitter Ratio: 0.5
-    Tree Height: 909
+    Tree Height: 368
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -24,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: IMU Temperature
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -50,442 +54,345 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
-      Class: rviz/RobotModel
-      Collision Enabled: false
-      Enabled: true
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        body_top:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        imu_sensor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        interface_board:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        pi_zero:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_6:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        reflectance_sensor_7:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        sensor_board:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tof_sensor_5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-      Name: pi-puck Model
-      Robot Description: pi_puck/robot_description
-      TF Prefix: pi_puck
-      Update Interval: 0
-      Value: true
-      Visual Enabled: true
-    - Class: rviz/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-        map:
-          Value: true
-        pi_puck/base_link:
-          Value: true
-        pi_puck/body_top:
-          Value: true
-        pi_puck/imu_sensor:
-          Value: true
-        pi_puck/interface_board:
-          Value: true
-        pi_puck/left_wheel:
-          Value: true
-        pi_puck/pi_zero:
-          Value: true
-        pi_puck/reflectance_sensor_0:
-          Value: true
-        pi_puck/reflectance_sensor_1:
-          Value: true
-        pi_puck/reflectance_sensor_2:
-          Value: true
-        pi_puck/reflectance_sensor_3:
-          Value: true
-        pi_puck/reflectance_sensor_4:
-          Value: true
-        pi_puck/reflectance_sensor_5:
-          Value: true
-        pi_puck/reflectance_sensor_6:
-          Value: true
-        pi_puck/reflectance_sensor_7:
-          Value: true
-        pi_puck/right_wheel:
-          Value: true
-        pi_puck/sensor_board:
-          Value: true
-        pi_puck/tof_sensor_0:
-          Value: true
-        pi_puck/tof_sensor_1:
-          Value: true
-        pi_puck/tof_sensor_2:
-          Value: true
-        pi_puck/tof_sensor_3:
-          Value: true
-        pi_puck/tof_sensor_4:
-          Value: true
-        pi_puck/tof_sensor_5:
-          Value: true
-      Marker Scale: 0.05000000074505806
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        map:
-          pi_puck/base_link:
-            pi_puck/body_top:
-              pi_puck/interface_board:
-                pi_puck/pi_zero:
-                  pi_puck/sensor_board:
-                    pi_puck/imu_sensor:
-                      {}
-                pi_puck/tof_sensor_0:
-                  {}
-                pi_puck/tof_sensor_1:
-                  {}
-                pi_puck/tof_sensor_2:
-                  {}
-                pi_puck/tof_sensor_3:
-                  {}
-                pi_puck/tof_sensor_4:
-                  {}
-                pi_puck/tof_sensor_5:
-                  {}
-              pi_puck/reflectance_sensor_0:
-                {}
-              pi_puck/reflectance_sensor_1:
-                {}
-              pi_puck/reflectance_sensor_2:
-                {}
-              pi_puck/reflectance_sensor_3:
-                {}
-              pi_puck/reflectance_sensor_4:
-                {}
-              pi_puck/reflectance_sensor_5:
-                {}
-              pi_puck/reflectance_sensor_6:
-                {}
-              pi_puck/reflectance_sensor_7:
-                {}
-            pi_puck/left_wheel:
-              {}
-            pi_puck/right_wheel:
-              {}
-      Update Interval: 0
-      Value: true
     - Class: rviz/Group
       Displays:
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 0
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/0
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 1
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/1
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 2
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/2
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 3
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/3
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 4
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/4
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 114; 159; 207
+              Enabled: true
+              Name: ToF 5
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/long_range_ir/5
+              Unreliable: false
+              Value: true
           Enabled: true
-          Name: ToF 0
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/0
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
+          Name: ToF Sensors
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Autocompute Intensity Bounds: false
+              Autocompute Value Bounds:
+                Max Value: 10
+                Min Value: -10
+                Value: true
+              Axis: Z
+              Channel Name: temperature
+              Class: rviz/Temperature
+              Color: 255; 255; 255
+              Color Transformer: Intensity
+              Decay Time: 0
+              Enabled: true
+              Invert Rainbow: true
+              Max Color: 255; 0; 0
+              Max Intensity: 100
+              Min Color: 0; 0; 0
+              Min Intensity: 0
+              Name: IMU Temperature
+              Position Transformer: XYZ
+              Queue Size: 10
+              Selectable: true
+              Size (Pixels): 3
+              Size (m): 0.009999999776482582
+              Style: Flat Squares
+              Topic: /pi_puck/navigation/spatial/imu/temperature
+              Unreliable: false
+              Use Fixed Frame: true
+              Use rainbow: false
+              Value: true
+            - Acceleration properties:
+                Acc. vector alpha: 1
+                Acc. vector color: 255; 0; 0
+                Acc. vector scale: 1
+                Derotate acceleration: true
+                Enable acceleration: false
+              Axes properties:
+                Axes scale: 1
+                Enable axes: true
+              Box properties:
+                Box alpha: 1
+                Box color: 255; 0; 0
+                Enable box: false
+                x_scale: 1
+                y_scale: 1
+                z_scale: 1
+              Class: rviz_imu_plugin/Imu
+              Enabled: false
+              Name: Imu
+              Topic: /pi_puck/navigation/spatial/imu/imu
+              Unreliable: false
+              Value: false
+              fixed_frame_orientation: true
           Enabled: true
-          Name: ToF 1
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/1
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
+          Name: IMU Sensors
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 0
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/0
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 1
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/1
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 2
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/2
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 3
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/3
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 4
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/4
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 5
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/5
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 6
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/6
+              Unreliable: false
+              Value: true
+            - Alpha: 0.5
+              Buffer Length: 1
+              Class: rviz/Range
+              Color: 239; 41; 41
+              Enabled: true
+              Name: IR Reflectance 7
+              Queue Size: 100
+              Topic: /pi_puck/navigation/proximity/short_range_ir/7
+              Unreliable: false
+              Value: true
           Enabled: true
-          Name: ToF 2
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/2
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
+          Name: IR Reflectance Sensors
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Autocompute Intensity Bounds: true
+              Autocompute Value Bounds:
+                Max Value: 10
+                Min Value: -10
+                Value: true
+              Axis: Z
+              Channel Name: intensity
+              Class: rviz/LaserScan
+              Color: 204; 0; 0
+              Color Transformer: FlatColor
+              Decay Time: 0
+              Enabled: true
+              Invert Rainbow: false
+              Max Color: 255; 255; 255
+              Max Intensity: 4096
+              Min Color: 0; 0; 0
+              Min Intensity: 0
+              Name: Merged Ranges
+              Position Transformer: XYZ
+              Queue Size: 10
+              Selectable: true
+              Size (Pixels): 3
+              Size (m): 0.019999999552965164
+              Style: Spheres
+              Topic: /pi_puck/interop/range_merger/scan
+              Unreliable: false
+              Use Fixed Frame: true
+              Use rainbow: true
+              Value: true
           Enabled: true
-          Name: ToF 3
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/3
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
+          Name: Interop
+        - Class: rviz/Group
+          Displays:
+            - Class: rviz/TF
+              Enabled: true
+              Frame Timeout: 30
+              Frames:
+                All Enabled: true
+              Marker Scale: 0.05000000074505806
+              Name: TF
+              Show Arrows: true
+              Show Axes: true
+              Show Names: true
+              Tree:
+                {}
+              Update Interval: 1
+              Value: true
+            - Angle Tolerance: 0.10000000149011612
+              Class: rviz/Odometry
+              Covariance:
+                Orientation:
+                  Alpha: 0.5
+                  Color: 255; 255; 127
+                  Color Style: Unique
+                  Frame: Local
+                  Offset: 1
+                  Scale: 1
+                  Value: true
+                Position:
+                  Alpha: 0.30000001192092896
+                  Color: 204; 51; 204
+                  Scale: 1
+                  Value: true
+                Value: true
+              Enabled: false
+              Keep: 100
+              Name: Odometry
+              Position Tolerance: 0.10000000149011612
+              Shape:
+                Alpha: 1
+                Axes Length: 1
+                Axes Radius: 0.10000000149011612
+                Color: 255; 25; 0
+                Head Length: 0.30000001192092896
+                Head Radius: 0.10000000149011612
+                Shaft Length: 1
+                Shaft Radius: 0.05000000074505806
+                Value: Arrow
+              Topic: /pi_puck/tf_broadcaster/odometry
+              Unreliable: false
+              Value: false
           Enabled: true
-          Name: ToF 4
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/4
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 114; 159; 207
-          Enabled: true
-          Name: ToF 5
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/long_range_ir/5
-          Unreliable: false
-          Value: true
-      Enabled: true
-      Name: ToF Sensors
-    - Class: rviz/Group
-      Displays:
-        - Acceleration properties:
-            Acc. vector alpha: 1
-            Acc. vector color: 255; 0; 0
-            Acc. vector scale: 1
-            Derotate acceleration: true
-            Enable acceleration: false
-          Axes properties:
-            Axes scale: 1
-            Enable axes: true
-          Box properties:
-            Box alpha: 1
-            Box color: 255; 0; 0
-            Enable box: false
-            x_scale: 1
-            y_scale: 1
-            z_scale: 1
-          Class: rviz_imu_plugin/Imu
-          Enabled: true
-          Name: Imu
-          Topic: /pi_puck/navigation/spatial/imu/imu
-          Unreliable: false
-          Value: true
-          fixed_frame_orientation: true
+          Name: Transform
         - Alpha: 1
-          Autocompute Intensity Bounds: false
-          Autocompute Value Bounds:
-            Max Value: 10
-            Min Value: -10
-            Value: true
-          Axis: Z
-          Channel Name: temperature
-          Class: rviz/Temperature
-          Color: 255; 255; 255
-          Color Transformer: Intensity
-          Decay Time: 0
+          Class: rviz/RobotModel
+          Collision Enabled: false
           Enabled: true
-          Invert Rainbow: true
-          Max Color: 255; 0; 0
-          Max Intensity: 100
-          Min Color: 0; 0; 0
-          Min Intensity: 0
-          Name: IMU Temperature
-          Position Transformer: XYZ
-          Queue Size: 10
-          Selectable: true
-          Size (Pixels): 3
-          Size (m): 0.009999999776482582
-          Style: Flat Squares
-          Topic: /pi_puck/navigation/spatial/imu/temperature
-          Unreliable: false
-          Use Fixed Frame: true
-          Use rainbow: false
+          Links:
+            All Links Enabled: true
+            Expand Joint Details: false
+            Expand Link Details: false
+            Expand Tree: false
+            Link Tree Style: Links in Alphabetic Order
+          Name: pi-puck Model
+          Robot Description: pi_puck/robot_description
+          TF Prefix: pi_puck
+          Update Interval: 0
           Value: true
-      Enabled: false
-      Name: IMU Sensors
-    - Class: rviz/Group
-      Displays:
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
+          Visual Enabled: true
+        - Class: rviz/Image
           Enabled: true
-          Name: IR Reflectance 0
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/0
+          Image Topic: /pi_puck/display/oled/image
+          Max Value: 1
+          Median window: 5
+          Min Value: 0
+          Name: OLED Display
+          Normalize Range: true
+          Queue Size: 2
+          Transport Hint: raw
           Unreliable: false
           Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
+        - Alpha: 1
+          Class: rviz/Map
+          Color Scheme: map
+          Draw Behind: true
           Enabled: true
-          Name: IR Reflectance 1
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/1
+          Name: Map
+          Topic: /pi_puck/map
           Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 2
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/2
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 3
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/3
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 4
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/4
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 5
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/5
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 6
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/6
-          Unreliable: false
-          Value: true
-        - Alpha: 0.5
-          Buffer Length: 1
-          Class: rviz/Range
-          Color: 239; 41; 41
-          Enabled: true
-          Name: IR Reflectance 7
-          Queue Size: 100
-          Topic: /pi_puck/navigation/proximity/short_range_ir/7
-          Unreliable: false
+          Use Timestamp: false
           Value: true
       Enabled: true
-      Name: IR Reflectance Sensors
+      Name: PiPuck
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
-    Frame Rate: 30
+    Fixed Frame: pi_puck/map
+    Frame Rate: 10
   Name: root
   Tools:
     - Class: rviz/Interact
@@ -508,33 +415,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.3697880506515503
+      Distance: 2.8319990634918213
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.5756996870040894
+        Y: 1.1301679611206055
+        Z: -1.230816125869751
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6647974252700806
+      Pitch: 0.814797043800354
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.91817569732666
+      Yaw: 4.276827812194824
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1375
+  Height: 1015
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd000000040000000000000265000004c1fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000418000000c900fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073010000045b000000a30000005c00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000004c1fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000004c1000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000a000000003efc0100000002fb0000000800540069006d0065010000000000000a000000025600fffffffb0000000800540069006d0065010000000000000450000000000000000000000680000004c100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  OLED Display:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000029900000319fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000026a000000c900fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007301000002ad000000a90000005c00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f00000319fc0200000004fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d00000250000000a400fffffffb00000018004f004c0045004400200044006900730070006c006100790100000293000000c30000001600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000007efc0100000002fb0000000800540069006d00650100000000000007800000025600fffffffb0000000800540069006d00650100000000000004500000000000000000000003cc0000031900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -543,6 +452,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 2560
+  Width: 1920
   X: 0
   Y: 33
