@@ -1,6 +1,6 @@
 # Pi-puck ROS Driver Package
 
-[![CodeFactor](https://www.codefactor.io/repository/github/yorkrobotlab/pi_puck_ros_packages/badge)](https://www.codefactor.io/repository/github/yorkrobotlab/pi_puck_ros_packages)
+[![CodeFactor](https://www.codefactor.io/repository/github/yorkrobotlab/pi-puck-ros/badge)](https://www.codefactor.io/repository/github/yorkrobotlab/pi-puck-ros)
 
 ## Introduction
 
