@@ -14,7 +14,7 @@ from std_msgs.msg import Float32, Int64, UInt16
 from smbus import SMBus
 
 # Constants
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
 EPUCK_I2C_ADDR = 0x1f
 
 LEFT_MOTOR_SPEED = 2

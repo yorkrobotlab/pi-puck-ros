@@ -11,7 +11,7 @@ from sensor_msgs.msg import Range
 from smbus import SMBus
 
 # Constants
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
 EPUCK_I2C_ADDR = 0x1f
 
 IR_CONTROL = 6

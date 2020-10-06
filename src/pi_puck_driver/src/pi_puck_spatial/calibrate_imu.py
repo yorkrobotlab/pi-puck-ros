@@ -12,7 +12,7 @@ from lsm9ds1 import LSM9DS1
 from smbus import SMBus
 
 # Constants
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
 EPUCK_I2C_ADDR = 0x1f
 
 LEFT_MOTOR_SPEED = 2

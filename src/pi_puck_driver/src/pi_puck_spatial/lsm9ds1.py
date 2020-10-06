@@ -94,7 +94,7 @@ def _twos_comp(val, bits):
 class LSM9DS1(object):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, i2c_bus=3, mag_address=_LSM9DS1_ADDRESS_MAG, xg_address=_LSM9DS1_ADDRESS_ACCELGYRO):
+    def __init__(self, i2c_bus=11, mag_address=_LSM9DS1_ADDRESS_MAG, xg_address=_LSM9DS1_ADDRESS_ACCELGYRO):
         """Initialise the LSM9DS1."""
         self._bus = SMBus(i2c_bus)
         self._mag_address = mag_address

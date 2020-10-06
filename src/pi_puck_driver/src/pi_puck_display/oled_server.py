@@ -12,7 +12,7 @@ from luma.core.render import canvas
 from luma.oled.device import ssd1306
 from PIL import Image, ImageFont
 
-OLED_I2C_PORT = 3
+OLED_I2C_PORT = 11
 OLED_I2C_ADDRESS = 0x3C
 OLED_WIDTH = 128
 OLED_HEIGHT = 32
