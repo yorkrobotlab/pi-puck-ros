@@ -9,7 +9,7 @@ from sensor_msgs.msg import BatteryState
 NAN = float("nan")
 BATTERIES = {
     "primary": {
-        "path": "/sys/bus/i2c/drivers/ads1015/3-0048/in4_input",
+        "path": "/sys/bus/i2c/drivers/ads1015/11-0048/iio:device0/in_voltage0_raw",
         "design_capacity": 1.8,  # 1800 mAh,
         "min_voltage": 3.3,  #  battery protection will kick in if below 3.3 volts
         "max_voltage": 4.2,
@@ -17,7 +17,7 @@ BATTERIES = {
         "location": "Primary battery (e-puck underside slot)"
     },
     "aux": {
-        "path": "/sys/bus/i2c/drivers/ads1015/3-0048/in5_input",
+        "path": "/sys/bus/i2c/drivers/ads1015/11-0048/iio:device0/in_voltage1_raw",
         "design_capacity": NAN,
         "min_voltage": 3.3,  # Value assumed, should be tuned to actual aux battery
         "max_voltage": 4.2,  # Value assumed, should be tuned to actual aux battery,
@@ -62,7 +62,7 @@ class PiPuckBatteryServer(object):
 
         Accurate to 4 significant figures between 3.3 and 4.2 volts using linear fitting.
         """
-        return (float(adc_value) + 79.10) / 503.1
+        return (float(adc_value) + 39.55) / 251.55
 
     @staticmethod
     def get_battery_voltage(battery_path):
