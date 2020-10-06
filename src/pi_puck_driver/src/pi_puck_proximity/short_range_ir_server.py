@@ -12,7 +12,7 @@ from smbus import SMBus
 
 # Constants
 I2C_CHANNEL = 4
-EPUCK_I2C_ADDR = 0x1e
+EPUCK_I2C_ADDR = 0x1f
 
 IR_CONTROL = 6
 IR0_REFLECTED = 7

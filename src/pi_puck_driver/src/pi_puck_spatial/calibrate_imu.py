@@ -13,7 +13,7 @@ from smbus import SMBus
 
 # Constants
 I2C_CHANNEL = 4
-EPUCK_I2C_ADDR = 0x1e
+EPUCK_I2C_ADDR = 0x1f
 
 LEFT_MOTOR_SPEED = 2
 RIGHT_MOTOR_SPEED = 3
